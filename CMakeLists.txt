@@ -14,11 +14,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 
+# Find External Package
+find_package(Vulkan REQUIRED)
+
+file(GLOB_RECURSE VulkanHeader Vulkan*.h)
+file(GLOB_RECURSE VulkanSource Vulkan*.cpp)
+
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        ${VulkanSource}
+        ${VulkanHeader}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -45,6 +53,8 @@ else()
 endif()
 
 target_link_libraries(QtVulkan PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+target_link_libraries(QtVulkan PRIVATE Vulkan::Vulkan)
 
 set_target_properties(QtVulkan PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

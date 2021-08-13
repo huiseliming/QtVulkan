@@ -21,14 +21,10 @@ static VkBool32 DebugReportCallbackEXT( VkDebugReportFlagsEXT flags,
                                         const char *pMessage,
                                         void *pUserData);
 
-VulkanInstance::VulkanInstance() 
-{
-    
-}
 
-VulkanInstance::VulkanInstance(bool enableValidationLayer)
+VulkanInstance::VulkanInstance(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions)
 {
-    CreateInstance(enableValidationLayer);
+    CreateInstance(enabledInstanceLayers, enabledInstanceExtensions);
     CreateDebugReporter();
 }
 
@@ -61,19 +57,33 @@ VulkanInstance::~VulkanInstance()
     DestroyInstance();
 }
 
-void VulkanInstance::CreateInstance(bool enableValidationLayer) 
+bool VulkanInstance::IsEnableValidationLayer() 
 {
-    _EnableValidationLayer = enableValidationLayer;
+    for (uint32_t i = 0; i < _EnabledInstanceLayers.size(); i++) 
+    {
+        if (strcmp(_EnabledInstanceLayers[i],"VK_LAYER_KHRONOS_validation") == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void VulkanInstance::CreateInstance() 
+{
+    std::vector<const char*> enabledInstanceLayers, enabledInstanceExtensions;
+    enabledInstanceExtensions = GetRequiredInstanceExtensions();
+    enabledInstanceExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+    enabledInstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
+    CreateInstance(enabledInstanceLayers, enabledInstanceExtensions);
+}
+
+void VulkanInstance::CreateInstance(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions) 
+{
+    assert(_Instance == VK_NULL_HANDLE);
+    _EnabledInstanceLayers = enabledInstanceLayers;
+    _EnabledInstanceExtenisons = enabledInstanceExtensions;
     uint32_t instanceVersion;
     vkEnumerateInstanceVersion(&instanceVersion);
-
-    auto requiredInstanceExtensions = GetRequiredInstanceExtensions();
-    _EnabledInstanceExtenisons.insert(_EnabledInstanceExtenisons.begin() ,requiredInstanceExtensions.begin(),requiredInstanceExtensions.end());
-    if(_EnableValidationLayer)
-    {
-        _EnabledInstanceExtenisons.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-        _EnabledInstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
-    }
 
     VkApplicationInfo applicationInfo{
         .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,

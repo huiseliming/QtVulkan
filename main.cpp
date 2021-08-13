@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
         std::printf("extensionName: %s\n", ext.extensionName);
         std::printf("specVersion  : %d\n", ext.specVersion);
     }
+    w.CreateVulkanLyaerAndExtensionSelector(layers, exts);
     VulkanInstance instance;
     instance.CreateInstance();
     w.show();

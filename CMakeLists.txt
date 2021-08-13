@@ -21,12 +21,16 @@ file(GLOB_RECURSE VulkanHeader Vulkan*.h)
 file(GLOB_RECURSE VulkanSource Vulkan*.cpp)
 
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        ${VulkanSource}
-        ${VulkanHeader}
+    main.cpp
+    CheckBoxDelegate.cpp
+    CheckBoxDelegate.h
+    CheckBoxVectorModel.cpp
+    CheckBoxVectorModel.h
+    mainwindow.cpp
+    mainwindow.h
+    mainwindow.ui
+    ${VulkanSource}
+    ${VulkanHeader}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

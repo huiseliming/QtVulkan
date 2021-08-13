@@ -6,7 +6,5 @@
 
 struct VulkanGraphics
 {
-
-
     std::unique_ptr<VulkanInstance> _Instance;
 };

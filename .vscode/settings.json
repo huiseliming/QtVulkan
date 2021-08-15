@@ -1,3 +1,9 @@
 {
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    // "cmake.debugConfig": {
+    //     "environment": [{
+    //         "name" : "Path",
+    //         "value": "{$env:Path};/Users/daimingze/Qt/6.2.0/macos/bin"
+    //     }]
+    // }
 }

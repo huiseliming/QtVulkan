@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+#include <QMainWindow>
 #include <QWidget>
 #include <VulkanGraphics.h>
 
@@ -8,7 +10,7 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QWidget
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -16,13 +18,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void CreateVulkanLyaerAndExtensionSelector(std::vector<VkLayerProperties> layerProperties, std::vector<VkExtensionProperties> extensionProperties);
-
-public slots:
-    void SelectVulkanLyaerAndExtension();
-
 public:
-    VulkanGraphics graphics;
+    std::unique_ptr<VulkanGraphics> _pGraphics;
 
 private:
     Ui::MainWindow *ui;

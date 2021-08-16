@@ -1,4 +1,4 @@
-#include "VulkanConfigWidget.h"
+#include "VulkanInstanceConfigWidget.h"
 
 #include <QCheckBox>
 #include <QHBoxLayout>
@@ -7,7 +7,9 @@
 #include <QPushButton>
 #include <QSettings>
 
-VulkanConfigWidget::VulkanConfigWidget(QWidget *parent) : QWidget(parent)
+VulkanInstanceConfigWidget::VulkanInstanceConfigWidget(QWidget *parent)
+    : QWidget(parent)
+    , _pMainWindow(reinterpret_cast<MainWindow*>(parent))
 {
     _InstanceLayerProperties = VulkanInstance::EnumerateInstanceLayerProperties();
     _InstanceExtensionProperties = VulkanInstance::EnumerateInstanceExtensionProperties();
@@ -15,12 +17,12 @@ VulkanConfigWidget::VulkanConfigWidget(QWidget *parent) : QWidget(parent)
     LoadVulkanInstanceLyaerAndExtensionConfig();
 }
 
-VulkanConfigWidget::~VulkanConfigWidget()
+VulkanInstanceConfigWidget::~VulkanInstanceConfigWidget()
 {
-
+    qDebug() << objectName() << "Destroyed!";
 }
 
-void VulkanConfigWidget::CreateVulkanInstanceLyaerAndExtensionSelector()
+void VulkanInstanceConfigWidget::CreateVulkanInstanceLyaerAndExtensionSelector()
 {
     QVBoxLayout* vBoxLayout = new QVBoxLayout(this);
     QHBoxLayout* topHBoxLayout = new QHBoxLayout();
@@ -58,17 +60,17 @@ void VulkanConfigWidget::CreateVulkanInstanceLyaerAndExtensionSelector()
     // create default settings button
     QPushButton* defaultSettingsPushButton = new QPushButton(this);
     defaultSettingsPushButton->setText("Default Settings");
-    QObject::connect(defaultSettingsPushButton, &QPushButton::clicked, this, &VulkanConfigWidget::OnDefaultSettingsButtonClicked);
+    QObject::connect(defaultSettingsPushButton, &QPushButton::clicked, this, &VulkanInstanceConfigWidget::OnDefaultSettingsButtonClicked);
     bottomHBoxLayout->addWidget(defaultSettingsPushButton);
 
     // create create instance button
     QPushButton* createInstancePushButton = new QPushButton(this);
     createInstancePushButton->setText("Create Instance");
-    QObject::connect(createInstancePushButton, &QPushButton::clicked, this, &VulkanConfigWidget::OnCreateInstanceButtonClicked);
+    QObject::connect(createInstancePushButton, &QPushButton::clicked, this, &VulkanInstanceConfigWidget::OnCreateInstanceButtonClicked);
     bottomHBoxLayout->addWidget(createInstancePushButton);
 }
 
-void VulkanConfigWidget::DefaultVulkanInstanceLyaerAndExtensionConfig()
+void VulkanInstanceConfigWidget::DefaultVulkanInstanceLyaerAndExtensionConfig()
 {
     std::vector<const char*> defaultInstanceLayers= { "VK_LAYER_KHRONOS_validation" };
     for(uint32_t i = 0; i < _InstanceLayerCheckBoxs.size(); i++){
@@ -96,7 +98,7 @@ void VulkanConfigWidget::DefaultVulkanInstanceLyaerAndExtensionConfig()
     }
 }
 
-void VulkanConfigWidget::SaveVulkanInstanceLyaerAndExtensionConfig()
+void VulkanInstanceConfigWidget::SaveVulkanInstanceLyaerAndExtensionConfig()
 {
     // save config
     QSettings settings;
@@ -127,11 +129,11 @@ void VulkanConfigWidget::SaveVulkanInstanceLyaerAndExtensionConfig()
     settings.endGroup();
 }
 
-void VulkanConfigWidget::LoadVulkanInstanceLyaerAndExtensionConfig()
+void VulkanInstanceConfigWidget::LoadVulkanInstanceLyaerAndExtensionConfig()
 {
     //load config
     QSettings settings;
-    int arraySize;
+    int32_t arraySize;
     settings.beginGroup("Vulkan");
     // load previous enabled instance layers
     std::vector<QString> loadInstanceLayers;
@@ -174,14 +176,27 @@ void VulkanConfigWidget::LoadVulkanInstanceLyaerAndExtensionConfig()
     settings.endGroup();
 }
 
-void VulkanConfigWidget::OnCreateInstanceButtonClicked()
+void VulkanInstanceConfigWidget::OnCreateInstanceButtonClicked()
 {
-    //_pMainWindow->_pGraphics->_Instance->CreateInstance( _InstanceLayerProperties, _InstanceExtensionProperties);
+    std::vector<const char*> enabledInstanceLayerNames;
+    std::vector<const char*> enabledInstanceExtensionNames;
+    for (uint32_t i = 0; i < _InstanceLayerCheckBoxs.size(); i++) {
+        if(_InstanceLayerCheckBoxs[i]->isChecked())
+        {
+            enabledInstanceLayerNames.push_back(_InstanceLayerProperties[i].layerName);
+        }
+    }
+    for (uint32_t i = 0; i < _InstanceExtensionCheckBoxs.size(); i++) {
+        if(_InstanceExtensionCheckBoxs[i]->isChecked())
+        {
+            enabledInstanceExtensionNames.push_back(_InstanceExtensionProperties[i].extensionName);
+        }
+    }
+    _pMainWindow->CreateVulkanInstance(enabledInstanceLayerNames, enabledInstanceExtensionNames);
     SaveVulkanInstanceLyaerAndExtensionConfig();
 }
 
-
-void VulkanConfigWidget::OnDefaultSettingsButtonClicked()
+void VulkanInstanceConfigWidget::OnDefaultSettingsButtonClicked()
 {
     DefaultVulkanInstanceLyaerAndExtensionConfig();
 }

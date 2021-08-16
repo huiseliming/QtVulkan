@@ -6,26 +6,28 @@
 #include "VulkanInstance.h"
 #include <vector>
 
-struct VulkanPhysicalDevices
+
+struct VulkanPhysicalDeviceInfo
 {
-protected:
-    VulkanPhysicalDevices() = default;
-public:
-    VulkanPhysicalDevices(const VulkanPhysicalDevices&) = delete;
-    VulkanPhysicalDevices(VulkanPhysicalDevices&&);
-    VulkanPhysicalDevices& operator=(const VulkanPhysicalDevices&) = delete;
-    VulkanPhysicalDevices& operator=(VulkanPhysicalDevices&&);
+    VulkanPhysicalDeviceInfo() = delete;
+    VulkanPhysicalDeviceInfo(VkPhysicalDevice physicalDevice);
+    VulkanPhysicalDeviceInfo(const VulkanPhysicalDeviceInfo&) = default;
+    VulkanPhysicalDeviceInfo(VulkanPhysicalDeviceInfo&&);
+    VulkanPhysicalDeviceInfo& operator=(const VulkanPhysicalDeviceInfo&) = default;
+    VulkanPhysicalDeviceInfo &operator=(VulkanPhysicalDeviceInfo&&);
 
-    static VulkanPhysicalDevices Get(VulkanInstance& instance);
-
-    std::vector<VkPhysicalDevice> GetPhysicalDevicesSuitable(std::function<bool(VkPhysicalDevice&)> physicalDevicesSuitable);
-    std::vector<VkPhysicalDevice> _PhysicalDevices;
+    VkPhysicalDevice _PhysicalDevice;
+    VkPhysicalDeviceProperties _PhysicalDeviceProperties;
+    VkPhysicalDeviceFeatures _PhysicalDeviceFeatures;
+    VkPhysicalDeviceMemoryProperties _PhysicalDeviceMemoryProperties;
+    std::vector<VkQueueFamilyProperties> _QueueFamilyProperties;
+    std::vector<VkExtensionProperties> _SupportedExtensionProperties;
 };
-
 
 struct VulkanDevice
 {
-    
+    static std::vector<VkPhysicalDevice> GetPhysicalDevices(VulkanInstance& instance);
+    VkPhysicalDevice _PhysicalDevice;
     VkDevice _Device;
 };
 

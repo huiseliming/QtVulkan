@@ -1,23 +1,30 @@
 #include "mainwindow.h"
-#include "VulkanConfigWidget.h"
 
 #include <QApplication>
 #include <QVulkanInstance>
-#include <VulkanInstance.h>
+#include "VulkanInstance.h"
+#include "VulkanTools.h"
+
 int main(int argc, char *argv[])
 {
-    auto layers = VulkanInstance::EnumerateInstanceLayerProperties();
     QApplication app(argc, argv);
-    QCoreApplication::setOrganizationName("Hslm");
-    QCoreApplication::setOrganizationDomain("unknow");
-    QCoreApplication::setApplicationName("QtVulkan");
+    try {
+        QCoreApplication::setOrganizationName("Hslm");
+        QCoreApplication::setOrganizationDomain("unknow");
+        QCoreApplication::setApplicationName("QtVulkan");
 
-    MainWindow mainWindow;
-    VulkanConfigWidget* pVulkanConfigWidget = new VulkanConfigWidget(&mainWindow);
-//    w.CreateVulkanLyaerAndExtensionSelector(layers, exts);
-//    VulkanInstance instance;
-//    instance.CreateInstance();
-    mainWindow.setCentralWidget(pVulkanConfigWidget);
-    mainWindow.show();
-    return app.exec();
+        MainWindow mainWindow;
+
+    //    w.CreateVulkanLyaerAndExtensionSelector(layers, exts);
+    //    VulkanInstance instance;
+    //    instance.CreateInstance();
+        mainWindow.show();
+        return app.exec();
+    } catch (const VkException& e) {
+        qDebug() << "[VkException] " << e.what();
+    } catch (const std::exception e){
+        qDebug() << "[VkException] " << e.what();
+    } catch (...){
+        qDebug() << "[UnknowException] ???" ;
+    }
 }

@@ -25,59 +25,69 @@ static VkBool32 DebugReportCallbackEXT( VkDebugReportFlagsEXT flags,
 VulkanInstance::VulkanInstance(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions)
 {
     CreateInstance(enabledInstanceLayers, enabledInstanceExtensions);
-    CreateDebugReporter();
 }
 
-VulkanInstance::VulkanInstance(VulkanInstance&& otherInstance) 
-{
-    if(std::addressof(otherInstance) != this)
-    {
-        this->_Instance = otherInstance._Instance;
-        otherInstance._Instance = nullptr;
-        this->_EnabledInstanceLayers = std::move(otherInstance._EnabledInstanceLayers);
-        this->_EnabledInstanceExtenisons = std::move(otherInstance._EnabledInstanceExtenisons);
-    }
-}
+//VulkanInstance::VulkanInstance(VulkanInstance&& otherInstance)
+//{
+//    if(std::addressof(otherInstance) != this)
+//    {
+//        this->_Instance = otherInstance._Instance;
+//        otherInstance._Instance = nullptr;
+//        this->_EnabledInstanceLayers = std::move(otherInstance._EnabledInstanceLayers);
+//        this->_EnabledInstanceExtenisons = std::move(otherInstance._EnabledInstanceExtenisons);
+//    }
+//}
 
-VulkanInstance& VulkanInstance::operator=(VulkanInstance&& otherInstance) 
-{
-    if(std::addressof(otherInstance) != this)
-    {
-        this->_Instance = otherInstance._Instance;
-        otherInstance._Instance = nullptr;
-        this->_EnabledInstanceLayers = std::move(otherInstance._EnabledInstanceLayers);
-        this->_EnabledInstanceExtenisons = std::move(otherInstance._EnabledInstanceExtenisons);
-    }
-    return *this;
-}
+//VulkanInstance& VulkanInstance::operator=(VulkanInstance&& otherInstance)
+//{
+//    if(std::addressof(otherInstance) != this)
+//    {
+//        this->_Instance = otherInstance._Instance;
+//        otherInstance._Instance = nullptr;
+//        this->_EnabledInstanceLayers = std::move(otherInstance._EnabledInstanceLayers);
+//        this->_EnabledInstanceExtenisons = std::move(otherInstance._EnabledInstanceExtenisons);
+//    }
+//    return *this;
+//}
 
 VulkanInstance::~VulkanInstance() 
 {
-    DestroyDebugReporter();
     DestroyInstance();
 }
 
-bool VulkanInstance::IsEnableValidationLayer() 
+bool VulkanInstance::IsEnableLayer(const char *LayerName)
 {
-    for (uint32_t i = 0; i < _EnabledInstanceLayers.size(); i++) 
+    for (uint32_t i = 0; i < _EnabledInstanceLayers.size(); i++)
     {
-        if (strcmp(_EnabledInstanceLayers[i],"VK_LAYER_KHRONOS_validation") == 0) {
+        if (strcmp(_EnabledInstanceLayers[i], LayerName) == 0) {
             return true;
         }
     }
     return false;
 }
 
-void VulkanInstance::CreateInstance() 
+bool VulkanInstance::IsEnableExtension(const char *ExtensionName)
 {
-    std::vector<const char*> enabledInstanceLayers, enabledInstanceExtensions;
-    enabledInstanceExtensions = GetRequiredInstanceExtensions();
-    enabledInstanceExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-    enabledInstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
-    CreateInstance(enabledInstanceLayers, enabledInstanceExtensions);
+    for (uint32_t i = 0; i < _EnabledInstanceExtenisons.size(); i++)
+    {
+        if (strcmp(_EnabledInstanceExtenisons[i], ExtensionName) == 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
-void VulkanInstance::CreateInstance(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions) 
+bool VulkanInstance::IsEnableValidationLayer() 
+{
+    return IsEnableLayer("VK_LAYER_KHRONOS_validation");
+}
+
+bool VulkanInstance::IsEnableDebugReportExtension()
+{
+    return IsEnableExtension(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+}
+
+void VulkanInstance::CreateInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions)
 {
     assert(_Instance == VK_NULL_HANDLE);
     _EnabledInstanceLayers = enabledInstanceLayers;
@@ -105,13 +115,16 @@ void VulkanInstance::CreateInstance(std::vector<const char*> enabledInstanceLaye
         .ppEnabledExtensionNames = _EnabledInstanceExtenisons.data(),
     };
     VK_ASSERT_SUCCESSED(vkCreateInstance(&instanceCI, nullptr, &_Instance));
-
+    if(IsEnableDebugReportExtension()){
+        CreateDebugReporter();
+    }
 }
 
 void VulkanInstance::DestroyInstance() 
 {
-    if(IsValid())
+    if(_Instance != VK_NULL_HANDLE)
     {
+        DestroyDebugReporter();
         vkDestroyInstance(_Instance, nullptr);
         _Instance = VK_NULL_HANDLE;
     }

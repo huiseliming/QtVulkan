@@ -6,5 +6,10 @@
 
 struct VulkanGraphics
 {
+    ~VulkanGraphics();
+
+    void CreateInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions);
+    void CreateDevice();
+
     std::unique_ptr<VulkanInstance> _Instance;
 };

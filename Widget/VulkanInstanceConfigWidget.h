@@ -6,19 +6,17 @@
 #include <mainwindow.h>
 #include <QCheckBox>
 
-class VulkanConfigWidget : public QWidget
+class VulkanInstanceConfigWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit VulkanConfigWidget(QWidget *parent = nullptr);
-    ~VulkanConfigWidget();
+    explicit VulkanInstanceConfigWidget(QWidget *parent = nullptr);
+    ~VulkanInstanceConfigWidget();
 
     void CreateVulkanInstanceLyaerAndExtensionSelector();
     void DefaultVulkanInstanceLyaerAndExtensionConfig();
     void SaveVulkanInstanceLyaerAndExtensionConfig();
     void LoadVulkanInstanceLyaerAndExtensionConfig();
-
-
 
 public slots:
     void OnCreateInstanceButtonClicked();
@@ -26,8 +24,6 @@ public slots:
 public:
     std::vector<QCheckBox*> _InstanceLayerCheckBoxs;
     std::vector<QCheckBox*> _InstanceExtensionCheckBoxs;
-    std::vector<bool> _InstanceLayerStates;
-    std::vector<bool> _InstanceExtensionStates;
     std::vector<VkLayerProperties> _InstanceLayerProperties;
     std::vector<VkExtensionProperties> _InstanceExtensionProperties;
     MainWindow* _pMainWindow{nullptr};

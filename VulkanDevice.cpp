@@ -1,5 +1,6 @@
 #include "VulkanDevice.h"
 #include "VulkanInstance.h"
+#include "VulkanTools.h"
 #include <memory>
 #include <vector>
 #include <vulkan/vulkan_core.h>
@@ -41,6 +42,39 @@ VulkanPhysicalDeviceInfo &VulkanPhysicalDeviceInfo::operator=(VulkanPhysicalDevi
         this->_SupportedExtensionProperties = std::move(other._SupportedExtensionProperties);
     }
     return *this;
+}
+
+uint64_t VulkanPhysicalDeviceInfo::GetDeviceLocalMemorySize()
+{
+    uint64_t deviceLocalMemorySize = 0;
+    for(uint32_t i = 0; i < _PhysicalDeviceMemoryProperties.memoryHeapCount; i++){
+        if(_PhysicalDeviceMemoryProperties.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT){
+            deviceLocalMemorySize += _PhysicalDeviceMemoryProperties.memoryHeaps[i].size;
+        }
+    }
+    return deviceLocalMemorySize;
+}
+
+void VulkanDevice::CreateDevice(std::vector<VkDeviceQueueCreateInfo> queueCreateInfos, std::vector<const char*> enabledLayerNames, std::vector<const char*> enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)
+{
+    VkDeviceCreateInfo deviceCI{
+        .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        .pNext = nullptr,
+        .flags = 0,
+        .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size()),
+        .pQueueCreateInfos = queueCreateInfos.data(),
+        .enabledLayerCount = static_cast<uint32_t>(enabledLayerNames.size()),
+        .ppEnabledLayerNames = enabledLayerNames.data(),
+        .enabledExtensionCount = static_cast<uint32_t>(enabledExtensionNames.size()),
+        .ppEnabledExtensionNames = enabledExtensionNames.data(),
+        .pEnabledFeatures = &enabledFeatures,
+    };
+    VK_ASSERT_SUCCESSED(vkCreateDevice(_PhysicalDevice, &deviceCI, nullptr, &_Device));
+}
+
+void VulkanDevice::DestroyDevice() 
+{
+    
 }
 
 std::vector<VkPhysicalDevice> VulkanDevice::GetPhysicalDevices(VulkanInstance& instance)

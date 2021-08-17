@@ -1,8 +1,8 @@
 #include "VulkanTools.h"
 
-std::string_view ToString(VkPhysicalDeviceType physicalDeviceTyp)
+const char * ToString(VkPhysicalDeviceType physicalDeviceType)
 {
-    switch (physicalDeviceTyp) {
+    switch (physicalDeviceType) {
 #define STR(r)                                                                                                                 \
     case VK_PHYSICAL_DEVICE_TYPE_##r:                                                                                          \
         return #r
@@ -16,7 +16,7 @@ std::string_view ToString(VkPhysicalDeviceType physicalDeviceTyp)
     }
 }
 
-std::string_view ToString(VkResult result)
+const char * ToString(VkResult result)
 {
     switch (result) {
 #define STR(r)                                                                                                                 \

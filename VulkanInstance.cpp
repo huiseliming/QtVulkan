@@ -122,8 +122,7 @@ void VulkanInstance::CreateInstance(std::vector<const char*>& enabledInstanceLay
 
 void VulkanInstance::DestroyInstance() 
 {
-    if(_Instance != VK_NULL_HANDLE)
-    {
+    if(_Instance != VK_NULL_HANDLE){
         DestroyDebugReporter();
         vkDestroyInstance(_Instance, nullptr);
         _Instance = VK_NULL_HANDLE;

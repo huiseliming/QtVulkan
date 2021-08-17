@@ -16,6 +16,8 @@ struct VulkanPhysicalDeviceInfo
     VulkanPhysicalDeviceInfo& operator=(const VulkanPhysicalDeviceInfo&) = default;
     VulkanPhysicalDeviceInfo &operator=(VulkanPhysicalDeviceInfo&&);
 
+    uint64_t GetDeviceLocalMemorySize();
+
     VkPhysicalDevice _PhysicalDevice;
     VkPhysicalDeviceProperties _PhysicalDeviceProperties;
     VkPhysicalDeviceFeatures _PhysicalDeviceFeatures;
@@ -26,9 +28,27 @@ struct VulkanPhysicalDeviceInfo
 
 struct VulkanDevice
 {
+    VulkanDevice() = default;
+    //VulkanDevice(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions);
+    VulkanDevice(const VulkanDevice&) = delete;
+    VulkanDevice(VulkanDevice&&) = delete;
+
+    VulkanDevice& operator=(const VulkanDevice&) = delete;
+    VulkanDevice& operator=(VulkanDevice&&) = delete;
+
+
+
+private:
+    void CreateDevice(std::vector<VkDeviceQueueCreateInfo> queueCreateInfos, std::vector<const char*> enabledLayerNames, std::vector<const char*> enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures);
+    void DestroyDevice();
+
+public:
     static std::vector<VkPhysicalDevice> GetPhysicalDevices(VulkanInstance& instance);
+
+public:
     VkPhysicalDevice _PhysicalDevice;
     VkDevice _Device;
+
 };
 
 

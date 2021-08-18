@@ -3,6 +3,7 @@
 #include "VulkanTools.h"
 #include <memory>
 #include <vector>
+#include <set>
 #include <vulkan/vulkan_core.h>
 
 VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VkPhysicalDevice physicalDevice)
@@ -47,10 +48,16 @@ VulkanPhysicalDeviceInfo &VulkanPhysicalDeviceInfo::operator=(VulkanPhysicalDevi
 uint64_t VulkanPhysicalDeviceInfo::GetDeviceLocalMemorySize()
 {
     uint64_t deviceLocalMemorySize = 0;
-    for(uint32_t i = 0; i < _PhysicalDeviceMemoryProperties.memoryHeapCount; i++){
-        if(_PhysicalDeviceMemoryProperties.memoryHeaps[i].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT){
-            deviceLocalMemorySize += _PhysicalDeviceMemoryProperties.memoryHeaps[i].size;
+    std::set<int32_t> deviceLocalMemoryHeaps;
+    for(uint32_t i = 0; i < _PhysicalDeviceMemoryProperties.memoryTypeCount; i++){
+        if(_PhysicalDeviceMemoryProperties.memoryTypes[i].propertyFlags == VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT){
+            if(_PhysicalDeviceMemoryProperties.memoryHeaps[_PhysicalDeviceMemoryProperties.memoryTypes[i].heapIndex].flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT){
+                deviceLocalMemoryHeaps.insert(_PhysicalDeviceMemoryProperties.memoryTypes[i].heapIndex);
+            }
         }
+    }
+    for (auto& deviceLocalMemoryHeap : deviceLocalMemoryHeaps){
+        deviceLocalMemorySize += _PhysicalDeviceMemoryProperties.memoryHeaps[deviceLocalMemoryHeap].size;
     }
     return deviceLocalMemorySize;
 }
@@ -74,7 +81,9 @@ void VulkanDevice::CreateDevice(std::vector<VkDeviceQueueCreateInfo> queueCreate
 
 void VulkanDevice::DestroyDevice() 
 {
-    
+    if(_Device != VK_NULL_HANDLE){
+        vkDestroyDevice(_Device,nullptr);
+    }
 }
 
 std::vector<VkPhysicalDevice> VulkanDevice::GetPhysicalDevices(VulkanInstance& instance)

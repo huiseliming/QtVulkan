@@ -39,7 +39,7 @@ struct VulkanDevice
 
 
 private:
-    void CreateDevice(std::vector<VkDeviceQueueCreateInfo> queueCreateInfos, std::vector<const char*> enabledLayerNames, std::vector<const char*> enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures);
+    void CreateDevice(std::vector<VkDeviceQueueCreateInfo> queueCreateInfos, std::vector<const char*> enabledLayerNames ={}, std::vector<const char*> enabledExtensionNames = {}, VkPhysicalDeviceFeatures enabledFeatures = {});
     void DestroyDevice();
 
 public:

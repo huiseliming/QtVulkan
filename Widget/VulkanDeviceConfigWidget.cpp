@@ -14,7 +14,7 @@ VulkanDeviceConfigWidget::VulkanDeviceConfigWidget(QWidget *parent)
     , _pMainWindow(reinterpret_cast<MainWindow*>(parent))
 {
     _PhysicalDevices = VulkanDevice::GetPhysicalDevices(*_pMainWindow->_pGraphics->_Instance.get());
-    for (int32_t i = 0; i < _PhysicalDevices.size(); i++) {
+    for (uint32_t i = 0; i < _PhysicalDevices.size(); i++) {
         _PhysicalDeviceInfos.emplace_back(VulkanPhysicalDeviceInfo(_PhysicalDevices[i]));
     }
     CreateVulkanDeviceSelector();
@@ -27,7 +27,7 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
     vBoxLayout->addLayout(topHBoxLayout);
     {
         QListWidget* listWidget = new QListWidget(this);
-        for (int32_t i = 0; i < _PhysicalDevices.size(); i++) {
+        for (uint32_t i = 0; i < _PhysicalDevices.size(); i++) {
             QRadioButton* radioButton = new QRadioButton(this);
             radioButton->setText(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceName);
             QListWidgetItem* listWidgetItem = new QListWidgetItem();

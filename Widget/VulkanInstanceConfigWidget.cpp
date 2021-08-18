@@ -31,7 +31,7 @@ void VulkanInstanceConfigWidget::CreateVulkanInstanceLyaerAndExtensionSelector()
     // list vulkan instance layer
     {
         QListWidget* listWidget = new QListWidget(this);
-        for (int32_t i = 0; i < _InstanceLayerProperties.size(); i++) {
+        for (uint32_t i = 0; i < _InstanceLayerProperties.size(); i++) {
             QCheckBox* checkBox = new QCheckBox(this);
             checkBox->setText(_InstanceLayerProperties[i].layerName);
             QListWidgetItem* listWidgetItem = new QListWidgetItem();
@@ -44,7 +44,7 @@ void VulkanInstanceConfigWidget::CreateVulkanInstanceLyaerAndExtensionSelector()
     // list vulkan instance extension
     {
         QListWidget* listWidget = new QListWidget(this);
-        for (int32_t i = 0; i < _InstanceExtensionProperties.size(); i++) {
+        for (uint32_t i = 0; i < _InstanceExtensionProperties.size(); i++) {
             QCheckBox* checkBox = new QCheckBox(this);
             checkBox->setText(_InstanceExtensionProperties[i].extensionName);
             QListWidgetItem* listWidgetItem = new QListWidgetItem();
@@ -138,7 +138,7 @@ void VulkanInstanceConfigWidget::LoadVulkanInstanceLyaerAndExtensionConfig()
     // load previous enabled instance layers
     std::vector<QString> loadInstanceLayers;
     arraySize = settings.beginReadArray("EnabledInstanceLayers");
-    for (uint32_t i = 0; i < arraySize; i++) {
+    for (int32_t i = 0; i < arraySize; i++) {
         settings.setArrayIndex(i);
         loadInstanceLayers.push_back(settings.value("EnabledInstanceLayerName").toString());
     }
@@ -157,7 +157,7 @@ void VulkanInstanceConfigWidget::LoadVulkanInstanceLyaerAndExtensionConfig()
     // load previous enabled instance extensions
     std::vector<QString> loadInstanceExtensions;
     arraySize = settings.beginReadArray("EnabledInstanceExtensions");
-    for (uint32_t i = 0; i < arraySize; i++) {
+    for (int32_t i = 0; i < arraySize; i++) {
         settings.setArrayIndex(i);
         loadInstanceExtensions.push_back(settings.value("EnabledInstanceExtensionName").toString());
     }

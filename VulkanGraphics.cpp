@@ -2,6 +2,7 @@
 
 VulkanGraphics::~VulkanGraphics()
 {
+    _Device.reset();
     _Instance.reset();
 }
 

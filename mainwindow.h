@@ -22,6 +22,7 @@ public:
 
 
     void CreateVulkanInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions);
+    void CreateVulkanDevice();
 
 public:
     std::unique_ptr<VulkanGraphics> _pGraphics;

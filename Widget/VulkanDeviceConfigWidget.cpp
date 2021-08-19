@@ -34,19 +34,21 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
             listWidget->addItem(listWidgetItem);
             listWidget->setItemWidget(listWidgetItem, radioButton);
             QObject::connect(radioButton, &QRadioButton::clicked, [this, topHBoxLayout, i] {
+                auto physicalDeviceInfo = _PhysicalDeviceInfos[i];
                 _extensionNames.clear();
                 _SelectedIndex = i;
                 _pExtensionListWidget->deleteLater();
                 _pExtensionListWidget = new QListWidget(this);
-                for (uint32_t j = 0; j < _PhysicalDeviceInfos[i]._SupportedExtensionProperties.size(); j++) {
+                for (uint32_t j = 0; j < physicalDeviceInfo._SupportedExtensionProperties.size(); j++) {
                     QCheckBox* checkBox = new QCheckBox(_pExtensionListWidget);
-                    checkBox->setText(_PhysicalDeviceInfos[i]._SupportedExtensionProperties[j].extensionName);
+                    checkBox->setText(physicalDeviceInfo._SupportedExtensionProperties[j].extensionName);
                     QListWidgetItem* listWidgetItem = new QListWidgetItem();
                     _pExtensionListWidget->addItem(listWidgetItem);
                     _pExtensionListWidget->setItemWidget(listWidgetItem, checkBox);
                     QObject::connect(checkBox, &QCheckBox::stateChanged, [this, checkBox, i, j]{
+                        auto physicalDeviceInfo = _PhysicalDeviceInfos[i];
                         if (checkBox->isChecked()) {
-                            _extensionNames.push_back(_PhysicalDeviceInfos[i]._SupportedExtensionProperties[j].extensionName);
+                            _extensionNames.push_back(physicalDeviceInfo._SupportedExtensionProperties[j].extensionName);
                         }else{
                             _extensionNames.erase(std::remove(std::begin(_extensionNames), std::end(_extensionNames), _PhysicalDeviceInfos[i]._SupportedExtensionProperties[j].extensionName), _extensionNames.end());
                         }
@@ -54,14 +56,14 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
                 }
                 topHBoxLayout->insertWidget(1,_pExtensionListWidget);
                 QString infoText;
-                infoText += QString::asprintf("DeviceType : %s\n", ToString(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceType));
-                infoText += QString::asprintf("DeviceLocalMemorySize : %d MB\n", static_cast<int32_t>(_PhysicalDeviceInfos[i].GetDeviceLocalMemorySize() / 1024UL / 1024UL));
-//                infoText += QString::asprintf("Supported Queue : %s\n", (_PhysicalDeviceInfos[i]._QueueFamilyProperties[0].queueFlags));
-//                infoText += QString::asprintf("deviceType : %s\n", ToString(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceType));
-//                infoText += QString::asprintf("deviceType : %s\n", ToString(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceType));
-//                infoText += QString::asprintf("deviceType : %s\n", ToString(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceType));
-//                infoText += QString::asprintf("deviceType : %s\n", ToString(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceType));
-//                infoText += QString::asprintf("deviceType : %s\n", ToString(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceType));
+                std::optional<uint32_t> graphicsQueueIndex = physicalDeviceInfo.GetGraphicsQueueIndex();
+                std::optional<uint32_t> computeQueueIndex = physicalDeviceInfo.GetComputeQueueIndex();
+                std::optional<uint32_t> transferQueueIndex = physicalDeviceInfo.GetTransferQueueIndex();
+                infoText += QString::asprintf("DeviceType            : %s\n", ToString(physicalDeviceInfo._PhysicalDeviceProperties.deviceType));
+                infoText += QString::asprintf("DeviceLocalMemorySize : %d MB\n", static_cast<int32_t>(physicalDeviceInfo.GetDeviceLocalMemorySize() / 1024UL / 1024UL));
+                infoText += QString::asprintf("GraphicsQueueCount    : %d\n", graphicsQueueIndex.has_value() ? physicalDeviceInfo._QueueFamilyProperties[graphicsQueueIndex.value()].queueCount : 0);
+                infoText += QString::asprintf("ComputeQueueIndex     : %d\n", computeQueueIndex.has_value() ? physicalDeviceInfo._QueueFamilyProperties[computeQueueIndex.value()].queueCount : 0);
+                infoText += QString::asprintf("TransferQueueIndex    : %d\n", transferQueueIndex.has_value() ? physicalDeviceInfo._QueueFamilyProperties[transferQueueIndex.value()].queueCount : 0);
                 _pTextBrowser->setText(infoText);
             });
         }
@@ -72,6 +74,7 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
         topHBoxLayout->addWidget(_pExtensionListWidget);
     }
     {
+
         _pTextBrowser = new QTextBrowser(this);
         topHBoxLayout->addWidget(_pTextBrowser);
     }

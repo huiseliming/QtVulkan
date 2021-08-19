@@ -4,6 +4,7 @@
 #include <QVulkanInstance>
 #include "VulkanInstance.h"
 #include "VulkanTools.h"
+#include <QFontDatabase>
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,8 @@ int main(int argc, char *argv[])
         QCoreApplication::setOrganizationName("Hslm");
         QCoreApplication::setOrganizationDomain("unknow");
         QCoreApplication::setApplicationName("QtVulkan");
+        const QFont defaultFixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+        app.setFont(defaultFixedFont);
 
         MainWindow mainWindow;
 

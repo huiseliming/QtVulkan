@@ -52,6 +52,13 @@ else()
     endif()
 endif()
 
+# vulkan define
+if(WIN32)
+    target_compile_definitions(QtVulkan PUBLIC VK_USE_PLATFORM_WIN32_KHR)
+elseif(APPLE)
+
+endif()
+
 target_link_libraries(QtVulkan PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 target_link_libraries(QtVulkan PRIVATE Vulkan::Vulkan)

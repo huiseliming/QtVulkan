@@ -5,6 +5,7 @@
 #include "VulkanTools.h"
 #include "VulkanInstance.h"
 #include <vector>
+#include <optional>
 
 
 struct VulkanPhysicalDeviceInfo
@@ -17,6 +18,10 @@ struct VulkanPhysicalDeviceInfo
     VulkanPhysicalDeviceInfo &operator=(VulkanPhysicalDeviceInfo&&);
 
     uint64_t GetDeviceLocalMemorySize();
+    std::optional<uint32_t> GetGraphicsQueueIndex();
+    std::optional<uint32_t> GetComputeQueueIndex();
+    std::optional<uint32_t> GetTransferQueueIndex();
+
 
     VkPhysicalDevice _PhysicalDevice;
     VkPhysicalDeviceProperties _PhysicalDeviceProperties;
@@ -32,14 +37,18 @@ struct VulkanDevice
     //VulkanDevice(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions);
     VulkanDevice(const VulkanDevice&) = delete;
     VulkanDevice(VulkanDevice&&) = delete;
-
     VulkanDevice& operator=(const VulkanDevice&) = delete;
     VulkanDevice& operator=(VulkanDevice&&) = delete;
 
-
+    struct {
+        uint32_t graphics{UINT32_MAX};
+        uint32_t compute{UINT32_MAX};
+        uint32_t transfer{UINT32_MAX};
+        uint32_t present{UINT32_MAX};
+    } queueFamilyIndices;
 
 private:
-    void CreateDevice(std::vector<VkDeviceQueueCreateInfo> queueCreateInfos, std::vector<const char*> enabledLayerNames ={}, std::vector<const char*> enabledExtensionNames = {}, VkPhysicalDeviceFeatures enabledFeatures = {});
+    void CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames ={}, std::vector<const char*> enabledExtensionNames = {}, VkPhysicalDeviceFeatures enabledFeatures = {});
     void DestroyDevice();
 
 public:

@@ -10,6 +10,7 @@
 #include "Widget/VulkanInstanceConfigWidget.h"
 #include "Widget/VulkanDeviceConfigWidget.h"
 
+
 MainWindow* GMainWindow;
 
 MainWindow::MainWindow(QWidget *parent)
@@ -35,4 +36,26 @@ void MainWindow::CreateVulkanInstance(std::vector<const char*>& enabledInstanceL
     _pVulkanDeviceConfigWidget = new VulkanDeviceConfigWidget(this);
     setCentralWidget(_pVulkanDeviceConfigWidget);
     _pVulkanInstanceConfigWidget->deleteLater();
+}
+
+void MainWindow::CreateVulkanDevice()
+{
+    VkSurfaceKHR surface;
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+    VkWin32SurfaceCreateInfoKHR surfaceCI{
+        .sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+        .pNext = nullptr,
+        .flags = 0,
+        .hinstance = (HINSTANCE)::GetModuleHandle(NULL),
+        .hwnd = (HWND)winId(),
+    };
+    VK_THROW_EXCEPT(vkCreateWin32SurfaceKHR(*(_pGraphics->_Instance), &surfaceCI, nullptr, &surface));
+#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+    VK_THROW_EXCEPT(vkCreateWaylandSurfaceKHR());
+#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+    VK_THROW_EXCEPT(vkCreateAndroidSurfaceKHR();
+#elif defined(VK_USE_PLATFORM_XCB_KHR)
+    VK_THROW_EXCEPT(vkCreateXcbSurfaceKHR();
+#endif
+    _pGraphics->_Device
 }

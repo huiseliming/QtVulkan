@@ -57,5 +57,5 @@ void MainWindow::CreateVulkanDevice()
 #elif defined(VK_USE_PLATFORM_XCB_KHR)
     VK_THROW_EXCEPT(vkCreateXcbSurfaceKHR();
 #endif
-    _pGraphics->_Device
+    //_pGraphics->_Device
 }

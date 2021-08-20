@@ -59,6 +59,11 @@ elseif(APPLE)
 
 endif()
 
+# windows warnning remove
+if(WIN32)
+    target_compile_definitions(QtVulkan PUBLIC _CRT_SECURE_NO_WARNINGS)
+endif()
+
 target_link_libraries(QtVulkan PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 target_link_libraries(QtVulkan PRIVATE Vulkan::Vulkan)

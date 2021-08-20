@@ -25,6 +25,7 @@ VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VkPhysicalDevice physicalDevi
 
 VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VulkanPhysicalDeviceInfo &&other)
 {
+    assert(std::addressof(other) != this);
     this->_PhysicalDevice = other._PhysicalDevice;
     this->_PhysicalDeviceProperties = other._PhysicalDeviceProperties;
     this->_PhysicalDeviceFeatures = other._PhysicalDeviceFeatures;
@@ -35,14 +36,13 @@ VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VulkanPhysicalDeviceInfo &&ot
 
 VulkanPhysicalDeviceInfo &VulkanPhysicalDeviceInfo::operator=(VulkanPhysicalDeviceInfo && other)
 {
-    if(std::addressof(other) != this){
-        this->_PhysicalDevice = other._PhysicalDevice;
-        this->_PhysicalDeviceProperties = other._PhysicalDeviceProperties;
-        this->_PhysicalDeviceFeatures = other._PhysicalDeviceFeatures;
-        this->_PhysicalDeviceMemoryProperties = other._PhysicalDeviceMemoryProperties;
-        this->_QueueFamilyProperties = std::move(other._QueueFamilyProperties);
-        this->_SupportedExtensionProperties = std::move(other._SupportedExtensionProperties);
-    }
+    assert(std::addressof(other) != this);
+    this->_PhysicalDevice = other._PhysicalDevice;
+    this->_PhysicalDeviceProperties = other._PhysicalDeviceProperties;
+    this->_PhysicalDeviceFeatures = other._PhysicalDeviceFeatures;
+    this->_PhysicalDeviceMemoryProperties = other._PhysicalDeviceMemoryProperties;
+    this->_QueueFamilyProperties = std::move(other._QueueFamilyProperties);
+    this->_SupportedExtensionProperties = std::move(other._SupportedExtensionProperties);
     return *this;
 }
 
@@ -125,29 +125,29 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
         sprintf(errormsg, "No transfer queue available for this device (%s) !", physicalDeviceInfo._PhysicalDeviceProperties.deviceName);
         VK_THROW_EXCEPT(errormsg);
     }
-    queueFamilyIndices.graphics = graphicsQueueIndex.value();
-    queueFamilyIndices.compute = computeQueueIndex.value();
-    queueFamilyIndices.transfer = transferQueueIndex.value();
+    _QueueFamilyIndices.graphics = graphicsQueueIndex.value();
+    _QueueFamilyIndices.compute = computeQueueIndex.value();
+    _QueueFamilyIndices.transfer = transferQueueIndex.value();
 
     queueCreateInfos.emplace_back(VkDeviceQueueCreateInfo{
         .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-        .queueFamilyIndex = queueFamilyIndices.graphics,
+        .queueFamilyIndex = _QueueFamilyIndices.graphics,
         .queueCount = 1,
         .pQueuePriorities = &defaultQueuePriority,
     });
-    if (queueFamilyIndices.compute != queueFamilyIndices.graphics) {
+    if (_QueueFamilyIndices.compute != _QueueFamilyIndices.graphics) {
         queueCreateInfos.emplace_back(VkDeviceQueueCreateInfo{
             .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-            .queueFamilyIndex = queueFamilyIndices.compute,
+            .queueFamilyIndex = _QueueFamilyIndices.compute,
             .queueCount = 1,
             .pQueuePriorities = &defaultQueuePriority,
         });
     }
-    if ((queueFamilyIndices.transfer != queueFamilyIndices.graphics) &&
-        (queueFamilyIndices.transfer != queueFamilyIndices.compute)) {
+    if ((_QueueFamilyIndices.transfer != _QueueFamilyIndices.graphics) &&
+        (_QueueFamilyIndices.transfer != _QueueFamilyIndices.compute)) {
         queueCreateInfos.emplace_back(VkDeviceQueueCreateInfo{
             .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-            .queueFamilyIndex = queueFamilyIndices.transfer,
+            .queueFamilyIndex = _QueueFamilyIndices.transfer,
             .queueCount = 1,
             .pQueuePriorities = &defaultQueuePriority,
         });
@@ -155,7 +155,7 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
 
     // find a present queue
     {
-        uint32_t queueFamilyCount = physicalDeviceInfo._QueueFamilyProperties.size();
+        uint32_t queueFamilyCount = static_cast<uint32_t>(physicalDeviceInfo._QueueFamilyProperties.size());
         std::vector<VkBool32> supportsPresent(queueFamilyCount);
         for (uint32_t i = 0; i < queueFamilyCount; i++){
             vkGetPhysicalDeviceSurfaceSupportKHR(physicalDeviceInfo._PhysicalDevice, i, surface, &supportsPresent[i]);
@@ -163,8 +163,8 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
         uint32_t graphicsQueueIndex = UINT32_MAX;
         uint32_t presentQueueIndex = UINT32_MAX;
         // find a queue for present and graphics
-        if(supportsPresent[queueFamilyIndices.graphics] == VK_TRUE){
-            presentQueueIndex = queueFamilyIndices.graphics;
+        if(supportsPresent[_QueueFamilyIndices.graphics] == VK_TRUE){
+            presentQueueIndex = _QueueFamilyIndices.graphics;
         }
         // find a queue for present and graphics
         if (presentQueueIndex == UINT32_MAX) {
@@ -193,17 +193,17 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
             VK_THROW_EXCEPT(errormsg);
         }
         if (graphicsQueueIndex != UINT32_MAX) {
-            queueFamilyIndices.graphics = graphicsQueueIndex;
+            _QueueFamilyIndices.graphics = graphicsQueueIndex;
         }
-        queueFamilyIndices.present = presentQueueIndex;
+        _QueueFamilyIndices.present = presentQueueIndex;
     }
 
-    if ((queueFamilyIndices.present != queueFamilyIndices.graphics) &&
-        (queueFamilyIndices.present != queueFamilyIndices.compute ) &&
-        (queueFamilyIndices.present != queueFamilyIndices.transfer)) {
+    if ((_QueueFamilyIndices.present != _QueueFamilyIndices.graphics) &&
+        (_QueueFamilyIndices.present != _QueueFamilyIndices.compute ) &&
+        (_QueueFamilyIndices.present != _QueueFamilyIndices.transfer)) {
         queueCreateInfos.emplace_back(VkDeviceQueueCreateInfo{
             .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-            .queueFamilyIndex = queueFamilyIndices.present,
+            .queueFamilyIndex = _QueueFamilyIndices.present,
             .queueCount = 1,
             .pQueuePriorities = &defaultQueuePriority,
         });
@@ -233,27 +233,27 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
 
     VK_ASSERT_SUCCESSED(vkCreateDevice(_PhysicalDevice, &deviceCI, nullptr, &_Device));
 
-    std::vector<uint32_t> allIndices{
-        queueFamilyIndices.graphics,
-        queueFamilyIndices.compute,
-        queueFamilyIndices.transfer,
-        queueFamilyIndices.present
+    // get device queue
+    std::vector<uint32_t> queueFamilyList{
+        _QueueFamilyIndices.graphics,
+        _QueueFamilyIndices.compute,
+        _QueueFamilyIndices.transfer,
+        _QueueFamilyIndices.present
     };
-    std::vector<VkQueue *> queues{&graphicsQueue_, &computeQueue_, &transferQueue_, &presentQueue_};
-    std::vector<uint32_t> queueIndices(allIndices.size(), UINT32_MAX);
-    for (size_t i = 0; i < allIndices.size(); i++) {
-        if (allIndices[i] != UINT32_MAX) {
+    std::vector<VkQueue *> queues{_GraphicsQueue.AddressOf(), _ComputeQueue.AddressOf(), _TransferQueue.AddressOf(), _PresentQueue.AddressOf()};
+    std::vector<uint32_t> queueIndices(queueFamilyList.size(), UINT32_MAX);
+    for (size_t i = 0; i < queueFamilyList.size(); i++) {
+        if (queueFamilyList[i] != UINT32_MAX) {
             bool exist = false;
             for (size_t j = 0; j < queueIndices.size(); j++) {
-                if (queueIndices[j] == allIndices[i]) {
+                if (queueIndices[j] == queueFamilyList[i]) {
                     exist = true;
                     *queues[i] = *queues[j];
                 }
             }
             if (!exist) {
-                queueIndices[i] = allIndices[i];
-                vkGetDeviceQueue(logicalDevice, allIndices[i], 0, queues[i]);
-            } else {
+                queueIndices[i] = queueFamilyList[i];
+                vkGetDeviceQueue(_Device, queueFamilyList[i], 0, queues[i]);
             }
         }
     }

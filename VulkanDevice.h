@@ -7,6 +7,7 @@
 #include <vector>
 #include <optional>
 
+#include "VulkanQueue.h"
 
 struct VulkanPhysicalDeviceInfo
 {
@@ -45,7 +46,13 @@ struct VulkanDevice
         uint32_t compute{UINT32_MAX};
         uint32_t transfer{UINT32_MAX};
         uint32_t present{UINT32_MAX};
-    } queueFamilyIndices;
+    } _QueueFamilyIndices;
+
+    VulkanQueue _GraphicsQueue;
+    VulkanQueue _ComputeQueue;
+    VulkanQueue _TransferQueue;
+    VulkanQueue _PresentQueue;
+
 
 private:
     void CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames ={}, std::vector<const char*> enabledExtensionNames = {}, VkPhysicalDeviceFeatures enabledFeatures = {});

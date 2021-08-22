@@ -59,11 +59,35 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
                 std::optional<uint32_t> graphicsQueueIndex = physicalDeviceInfo.GetGraphicsQueueIndex();
                 std::optional<uint32_t> computeQueueIndex = physicalDeviceInfo.GetComputeQueueIndex();
                 std::optional<uint32_t> transferQueueIndex = physicalDeviceInfo.GetTransferQueueIndex();
-                infoText += QString::asprintf("DeviceType            : %s\n", ToString(physicalDeviceInfo._PhysicalDeviceProperties.deviceType));
-                infoText += QString::asprintf("DeviceLocalMemorySize : %d MB\n", static_cast<int32_t>(physicalDeviceInfo.GetDeviceLocalMemorySize() / 1024UL / 1024UL));
-                infoText += QString::asprintf("GraphicsQueueCount    : %d\n", graphicsQueueIndex.has_value() ? physicalDeviceInfo._QueueFamilyProperties[graphicsQueueIndex.value()].queueCount : 0);
-                infoText += QString::asprintf("ComputeQueueIndex     : %d\n", computeQueueIndex.has_value() ? physicalDeviceInfo._QueueFamilyProperties[computeQueueIndex.value()].queueCount : 0);
-                infoText += QString::asprintf("TransferQueueIndex    : %d\n", transferQueueIndex.has_value() ? physicalDeviceInfo._QueueFamilyProperties[transferQueueIndex.value()].queueCount : 0);
+                infoText.reserve(4096);
+                infoText += QString("DeviceType : %1\n").arg(ToString(physicalDeviceInfo._PhysicalDeviceProperties.deviceType));
+                infoText += QString("DeviceLocalMemorySize : %1 MB\n").arg(static_cast<int32_t>(physicalDeviceInfo.GetDeviceLocalMemorySize() / 1024UL / 1024UL));
+                for (uint32_t j = 0; j < physicalDeviceInfo._QueueFamilyProperties.size(); j++) {
+                    infoText += QString("QueueCount : %1\n").arg(static_cast<int32_t>(physicalDeviceInfo._QueueFamilyProperties[j].queueCount));
+                    infoText += "QueueFlag : ";
+                    std::vector<const char*> flagStrings;
+                    if(physicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT){
+                        flagStrings.push_back("Graphics");
+                    }
+                    if(physicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_COMPUTE_BIT){
+                        flagStrings.push_back("Compute");
+                    }
+                    if(physicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_TRANSFER_BIT){
+                        flagStrings.push_back("Transfer");
+                    }
+                    if(physicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_SPARSE_BINDING_BIT){
+                        flagStrings.push_back("SparseBinding");
+                    }
+                    if(physicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_PROTECTED_BIT){
+                        flagStrings.push_back("Protected");
+                    }
+                    for (uint32_t k = 0; k < flagStrings.size() - 1; k++) {
+                        infoText += flagStrings[k];
+                        infoText += " | ";
+                    }
+                    infoText += flagStrings[flagStrings.size() - 1];
+                    infoText.append("\n");
+                }
                 _pTextBrowser->setText(infoText);
             });
         }

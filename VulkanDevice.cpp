@@ -65,7 +65,7 @@ uint64_t VulkanPhysicalDeviceInfo::GetDeviceLocalMemorySize()
 
 std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetGraphicsQueueIndex()
 {
-    VkQueueFlags graphicsQueueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT;
+    VkQueueFlags graphicsQueueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
     for (uint32_t i = 0; i < _QueueFamilyProperties.size(); i++) {
         if ((_QueueFamilyProperties[i].queueFlags & graphicsQueueFlags) == graphicsQueueFlags) {
             return i;
@@ -76,7 +76,7 @@ std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetGraphicsQueueIndex()
 
 std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetComputeQueueIndex()
 {
-    VkQueueFlags computeQueueFlags = VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT;
+    VkQueueFlags computeQueueFlags = VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
     for (uint32_t i = 0; i < _QueueFamilyProperties.size(); i++) {
         if ((_QueueFamilyProperties[i].queueFlags & computeQueueFlags) == computeQueueFlags &&
                 !(_QueueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
@@ -88,7 +88,7 @@ std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetComputeQueueIndex()
 
 std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetTransferQueueIndex()
 {
-    VkQueueFlags TransferQueueFlags =  VK_QUEUE_TRANSFER_BIT | VK_QUEUE_SPARSE_BINDING_BIT;
+    VkQueueFlags TransferQueueFlags =  VK_QUEUE_TRANSFER_BIT;
     for (uint32_t i = 0; i < _QueueFamilyProperties.size(); i++) {
         if ((_QueueFamilyProperties[i].queueFlags & TransferQueueFlags) == TransferQueueFlags &&
                 !(_QueueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) &&

@@ -1,4 +1,5 @@
 #include "VulkanWindow.h"
+#include <vulkan/vulkan_core.h>
 
 VulkanWindow::VulkanWindow(QWindow* parent) 
 {
@@ -7,13 +8,25 @@ VulkanWindow::VulkanWindow(QWindow* parent)
 
 VulkanWindow::~VulkanWindow() 
 {
-    
+    DestroySurface();
 }
 
+
+void VulkanWindow::DestroySurface()
+{
+    if(_Surface != VK_NULL_HANDLE) {
+        vkDestroySurfaceKHR(_Instance, _Surface, nullptr);
+        _Surface = VK_NULL_HANDLE;
+        _Instance = VK_NULL_HANDLE;
+    }
+}
 
 VkSurfaceKHR VulkanWindow::GetSurfaceKHR(VkInstance instance)
 {
     assert(instance != VK_NULL_HANDLE);
+    if(_Instance != instance) {
+        DestroySurface();
+    }
     if (_Surface == VK_NULL_HANDLE) {
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
         VkWin32SurfaceCreateInfoKHR surfaceCI{
@@ -35,6 +48,7 @@ VkSurfaceKHR VulkanWindow::GetSurfaceKHR(VkInstance instance)
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
         VK_ASSERT_SUCCESSED(vkCreateAndroidSurfaceKHR();
 #endif
+        _Instance = instance;
     }
     return _Surface;
 }

@@ -153,6 +153,7 @@ void VulkanInstance::DestroyDebugReporter()
             vkGetInstanceProcAddr(_Instance, "vkDestroyDebugReportCallbackEXT"));
         assert(fpDestroyDebugReportCallbackEXT != nullptr);
         fpDestroyDebugReportCallbackEXT(_Instance, _fpDebugReportCallbackEXT, nullptr);
+        _fpDebugReportCallbackEXT = VK_NULL_HANDLE;
     }
 }
 

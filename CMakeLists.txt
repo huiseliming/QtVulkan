@@ -58,7 +58,7 @@ if(WIN32)
 elseif(APPLE)
     target_compile_definitions(QtVulkan PUBLIC VK_USE_PLATFORM_MACOS_MVK)
 endif()
-
+ 
 # windows warnning remove
 if(WIN32)
     target_compile_definitions(QtVulkan PUBLIC _CRT_SECURE_NO_WARNINGS)

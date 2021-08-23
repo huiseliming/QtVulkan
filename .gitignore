@@ -88,3 +88,7 @@ compile_commands.json
 .DS_Store
 
 build
+
+# clangd cache
+.cache
+

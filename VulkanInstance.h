@@ -11,7 +11,7 @@ struct VulkanInstance
     VulkanInstance(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions);
     VulkanInstance(const VulkanInstance&) = delete;
     VulkanInstance(VulkanInstance&&) = delete;
-
+    
     VulkanInstance& operator=(const VulkanInstance&) = delete;
     VulkanInstance& operator=(VulkanInstance&&) = delete;
 

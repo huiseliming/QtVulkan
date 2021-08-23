@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QWidget>
+#include <cstdint>
+#include <vector>
 #include "VulkanDevice.h"
 #include "mainwindow.h"
 
@@ -25,12 +27,14 @@ private:
     QListWidget* _pExtensionListWidget{nullptr};
     QTextBrowser* _pTextBrowser{nullptr};
 
-
     std::vector<VkPhysicalDevice> _PhysicalDevices;
     std::vector<VulkanPhysicalDeviceInfo> _PhysicalDeviceInfos;
-    int32_t _SelectedIndex;
-    std::vector<const char*> _extensionNames;
+
+    uint32_t _SelectedDeviceIndex = UINT32_MAX;
+    std::vector<const char*> _LayerNames;
+    std::vector<const char*> _ExtensionNames;
     MainWindow* _pMainWindow{nullptr};
+    
 signals:
 
 };

@@ -36,8 +36,9 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
             listWidget->setItemWidget(listWidgetItem, radioButton);
             QObject::connect(radioButton, &QRadioButton::clicked, [this, topHBoxLayout, i] {
                 auto physicalDeviceInfo = _PhysicalDeviceInfos[i];
-                _extensionNames.clear();
-                _SelectedIndex = i;
+                _ExtensionNames.clear();
+                _SelectedDeviceIndex = i;
+                _pExtensionListWidget->clear();
                 _pExtensionListWidget->deleteLater();
                 _pExtensionListWidget = new QListWidget(this);
                 for (uint32_t j = 0; j < physicalDeviceInfo._SupportedExtensionProperties.size(); j++) {
@@ -49,9 +50,9 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
                     QObject::connect(checkBox, &QCheckBox::stateChanged, [this, checkBox, i, j]{
                         auto physicalDeviceInfo = _PhysicalDeviceInfos[i];
                         if (checkBox->isChecked()) {
-                            _extensionNames.push_back(physicalDeviceInfo._SupportedExtensionProperties[j].extensionName);
+                            _ExtensionNames.push_back(physicalDeviceInfo._SupportedExtensionProperties[j].extensionName);
                         }else{
-                            _extensionNames.erase(std::remove(std::begin(_extensionNames), std::end(_extensionNames), _PhysicalDeviceInfos[i]._SupportedExtensionProperties[j].extensionName), _extensionNames.end());
+                            _ExtensionNames.erase(std::remove(std::begin(_ExtensionNames), std::end(_ExtensionNames), _PhysicalDeviceInfos[i]._SupportedExtensionProperties[j].extensionName), _ExtensionNames.end());
                         }
                     });
                 }
@@ -95,11 +96,13 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
         _pExtensionListWidget = new QListWidget(this);
         topHBoxLayout->addWidget(_pExtensionListWidget);
     }
-    {
 
-        _pTextBrowser = new QTextBrowser(this);
-        topHBoxLayout->addWidget(_pTextBrowser);
-    }
+    QHBoxLayout* centerHBoxLayout = new QHBoxLayout();
+    vBoxLayout->addLayout(centerHBoxLayout);
+
+    _pTextBrowser = new QTextBrowser(this);
+    centerHBoxLayout->addWidget(_pTextBrowser);
+
     QHBoxLayout* bottomHBoxLayout = new QHBoxLayout();
     vBoxLayout->addLayout(bottomHBoxLayout);
 
@@ -114,5 +117,5 @@ void VulkanDeviceConfigWidget::OnCreateDeviceButtonClicked()
 {
     std::vector<const char*> enabledLayerNames;
     std::vector<const char*> enabledExtensionNames;
-    _pMainWindow->CreateVulkanDevice(_PhysicalDeviceInfos[_SelectedIndex], enabledLayerNames, enabledExtensionNames, VkPhysicalDeviceFeatures{});
+    _pMainWindow->CreateVulkanDevice(_PhysicalDeviceInfos[_SelectedDeviceIndex], enabledLayerNames, enabledExtensionNames, VkPhysicalDeviceFeatures{});
 }

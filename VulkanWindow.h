@@ -13,9 +13,7 @@ public:
 
     void DestroySurface();
 
-    VkSurfaceKHR GetSurfaceKHR(VkInstance instance);
-    VkInstance _Instance{VK_NULL_HANDLE};
-    VkSurfaceKHR _Surface{VK_NULL_HANDLE};
+    VkSurfaceKHR CreateSurfaceKHR(VkInstance instance);
 };
 
 

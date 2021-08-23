@@ -8,6 +8,7 @@
 #include <vulkan/vulkan_core.h>
 
 VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VkPhysicalDevice physicalDevice)
+    :_PhysicalDevice(physicalDevice)
 {
     vkGetPhysicalDeviceProperties(physicalDevice, &_PhysicalDeviceProperties);
     vkGetPhysicalDeviceFeatures(physicalDevice, &_PhysicalDeviceFeatures);
@@ -228,7 +229,7 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
         .pEnabledFeatures = &enabledFeatures,
     };
 
-    VK_ASSERT_SUCCESSED(vkCreateDevice(_PhysicalDevice, &deviceCI, nullptr, &_Device));
+    VK_ASSERT_SUCCESSED(vkCreateDevice(physicalDeviceInfo._PhysicalDevice, &deviceCI, nullptr, &_Device));
 
     // get device queue
     std::vector<uint32_t> queueFamilyList{

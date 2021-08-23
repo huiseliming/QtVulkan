@@ -24,7 +24,7 @@ struct VulkanPhysicalDeviceInfo
     std::optional<uint32_t> GetTransferQueueIndex();
 
 
-    VkPhysicalDevice _PhysicalDevice;
+    VkPhysicalDevice _PhysicalDevice{VK_NULL_HANDLE};
     VkPhysicalDeviceProperties _PhysicalDeviceProperties;
     VkPhysicalDeviceFeatures _PhysicalDeviceFeatures;
     VkPhysicalDeviceMemoryProperties _PhysicalDeviceMemoryProperties;
@@ -60,7 +60,6 @@ public:
     static std::vector<VkPhysicalDevice> GetPhysicalDevices(VulkanInstance& instance);
 
 public:
-    VkPhysicalDevice _PhysicalDevice;
     VkDevice _Device;
 
 };

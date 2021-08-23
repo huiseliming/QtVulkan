@@ -53,8 +53,6 @@ struct VulkanDevice
     VulkanQueue _TransferQueue;
     VulkanQueue _PresentQueue;
 
-
-private:
     void CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames ={}, std::vector<const char*> enabledExtensionNames = {}, VkPhysicalDeviceFeatures enabledFeatures = {});
     void DestroyDevice();
 

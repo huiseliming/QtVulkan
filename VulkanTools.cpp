@@ -1,5 +1,8 @@
 #include "VulkanTools.h"
 
+namespace VulkanTools
+{
+
 const char * ToString(VkPhysicalDeviceType physicalDeviceType)
 {
     switch (physicalDeviceType) {
@@ -65,4 +68,43 @@ const char * ToString(VkResult result)
     default:
         return "VK_UNKNOWN_ERROR";
     }
+}
+
+
+uint32_t GetQueueFamilyIndex(const std::vector<VkQueueFamilyProperties> &queueFamilyProperties,
+                             const VkQueueFlagBits queueFlags)
+{
+    // Dedicated queue for compute
+    // Try to find a queue family index that supports compute but not graphics
+    if (queueFlags & VK_QUEUE_COMPUTE_BIT) {
+        for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilyProperties.size()); i++) {
+            if ( (queueFamilyProperties[i].queueFlags & queueFlags) &&
+                !(queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
+                return i;
+            }
+        }
+    }
+
+    // Dedicated queue for transfer
+    // Try to find a queue family index that supports transfer but not graphics and compute
+    if (queueFlags & VK_QUEUE_TRANSFER_BIT) {
+        for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilyProperties.size()); i++) {
+            if ( (queueFamilyProperties[i].queueFlags & queueFlags) &&
+                !(queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) &&
+                !(queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)) {
+                return i;
+            }
+        }
+    }
+
+    // For other queue types or if no separate compute queue is present, return the first one to support the requested flags
+    for (uint32_t i = 0; i < static_cast<uint32_t>(queueFamilyProperties.size()); i++) {
+        if (queueFamilyProperties[i].queueFlags & queueFlags) {
+            return i;
+        }
+    }
+    return UINT32_MAX;
+}
+
+
 }

@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     //ui->setupUi(this);
     _pVulkanInstanceConfigWidget = new VulkanInstanceConfigWidget(this);
     setCentralWidget(_pVulkanInstanceConfigWidget);
+    //setSurfaceType(Surface::VulkanSurface);
 }
 
 MainWindow::~MainWindow()
@@ -38,7 +39,7 @@ void MainWindow::CreateVulkanInstance(std::vector<const char*>& enabledInstanceL
     _pVulkanInstanceConfigWidget->deleteLater();
 }
 
-void MainWindow::CreateVulkanDevice()
+void MainWindow::CreateVulkanDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, std::vector<const char*>& enabledLayerNames, std::vector<const char*>& enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)
 {
     VkSurfaceKHR surface;
 #if defined(VK_USE_PLATFORM_WIN32_KHR)
@@ -50,12 +51,17 @@ void MainWindow::CreateVulkanDevice()
         .hwnd = (HWND)winId(),
     };
     VK_THROW_EXCEPT(vkCreateWin32SurfaceKHR(*(_pGraphics->_Instance), &surfaceCI, nullptr, &surface));
-#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
-    VK_THROW_EXCEPT(vkCreateWaylandSurfaceKHR());
+#elif defined (VK_USE_PLATFORM_MACOS_MVK)
+    VkMacOSSurfaceCreateInfoMVK surfaceCI{
+        .sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK,
+        .pNext = nullptr,
+        .flags = 0,
+        .pView = (void*) winId(),
+    };
+    VK_THROW_EXCEPT(vkCreateMacOSSurfaceMVK(*(_pGraphics->_Instance), &surfaceCI, nullptr, &surface));
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
     VK_THROW_EXCEPT(vkCreateAndroidSurfaceKHR();
-#elif defined(VK_USE_PLATFORM_XCB_KHR)
-    VK_THROW_EXCEPT(vkCreateXcbSurfaceKHR();
 #endif
-    //_pGraphics->_Device
+    _pGraphics->CreateDevice(physicalDeviceInfo, surface, enabledLayerNames, enabledExtensionNames, enabledFeatures);
+    _pVulkanDeviceConfigWidget->deleteLater();
 }

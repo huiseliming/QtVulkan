@@ -56,7 +56,7 @@ endif()
 if(WIN32)
     target_compile_definitions(QtVulkan PUBLIC VK_USE_PLATFORM_WIN32_KHR)
 elseif(APPLE)
-
+    target_compile_definitions(QtVulkan PUBLIC VK_USE_PLATFORM_MACOS_MVK)
 endif()
 
 # windows warnning remove

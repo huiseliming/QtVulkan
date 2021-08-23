@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iterator>
 #include <QTextBrowser>
+#include <vector>
 
 VulkanDeviceConfigWidget::VulkanDeviceConfigWidget(QWidget *parent)
     : QWidget(parent)
@@ -56,15 +57,12 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
                 }
                 topHBoxLayout->insertWidget(1,_pExtensionListWidget);
                 QString infoText;
-                std::optional<uint32_t> graphicsQueueIndex = physicalDeviceInfo.GetGraphicsQueueIndex();
-                std::optional<uint32_t> computeQueueIndex = physicalDeviceInfo.GetComputeQueueIndex();
-                std::optional<uint32_t> transferQueueIndex = physicalDeviceInfo.GetTransferQueueIndex();
                 infoText.reserve(4096);
-                infoText += QString("DeviceType : %1\n").arg(ToString(physicalDeviceInfo._PhysicalDeviceProperties.deviceType));
+                infoText += QString("DeviceType : %1\n").arg(VulkanTools::ToString(physicalDeviceInfo._PhysicalDeviceProperties.deviceType));
                 infoText += QString("DeviceLocalMemorySize : %1 MB\n").arg(static_cast<int32_t>(physicalDeviceInfo.GetDeviceLocalMemorySize() / 1024UL / 1024UL));
                 for (uint32_t j = 0; j < physicalDeviceInfo._QueueFamilyProperties.size(); j++) {
                     infoText += QString("QueueCount : %1\n").arg(static_cast<int32_t>(physicalDeviceInfo._QueueFamilyProperties[j].queueCount));
-                    infoText += "QueueFlag : ";
+                    infoText += "QueueFlag  : ";
                     std::vector<const char*> flagStrings;
                     if(physicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT){
                         flagStrings.push_back("Graphics");
@@ -86,7 +84,7 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
                         infoText += " | ";
                     }
                     infoText += flagStrings[flagStrings.size() - 1];
-                    infoText.append("\n");
+                    infoText += "\n";
                 }
                 _pTextBrowser->setText(infoText);
             });
@@ -114,5 +112,7 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
 
 void VulkanDeviceConfigWidget::OnCreateDeviceButtonClicked()
 {
-
+    std::vector<const char*> enabledLayerNames;
+    std::vector<const char*> enabledExtensionNames;
+    _pMainWindow->CreateVulkanDevice(_PhysicalDeviceInfos[_SelectedIndex], enabledLayerNames, enabledExtensionNames, VkPhysicalDeviceFeatures{});
 }

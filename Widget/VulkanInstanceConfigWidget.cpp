@@ -19,7 +19,7 @@ VulkanInstanceConfigWidget::VulkanInstanceConfigWidget(QWidget *parent)
 
 VulkanInstanceConfigWidget::~VulkanInstanceConfigWidget()
 {
-    qDebug() << objectName() << "Destroyed!";
+//    qDebug() << objectName() << "Destroyed!";
 }
 
 void VulkanInstanceConfigWidget::CreateVulkanInstanceLyaerAndExtensionSelector()

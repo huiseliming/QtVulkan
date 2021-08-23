@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 
 #define VK_EXCEPT(...) VkException(__LINE__, __FILE__, ##__VA_ARGS__)
 #define VK_THROW_EXCEPT(...) throw VK_EXCEPT(__VA_ARGS__)

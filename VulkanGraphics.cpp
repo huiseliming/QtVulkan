@@ -10,3 +10,9 @@ void VulkanGraphics::CreateInstance(std::vector<const char*>& enabledInstanceLay
 {
     _Instance = std::make_unique<VulkanInstance>(enabledInstanceLayers, enabledInstanceExtensions);
 }
+
+void VulkanGraphics::CreateDevice(VulkanPhysicalDeviceInfo &physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char *>& enabledLayerNames, std::vector<const char *>& enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)
+{
+    _Device = std::make_unique<VulkanDevice>();
+    _Device->CreateDevice(physicalDeviceInfo, surface, enabledLayerNames, enabledExtensionNames, enabledFeatures);
+}

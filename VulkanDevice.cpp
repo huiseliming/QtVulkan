@@ -106,29 +106,26 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
     static char errormsg[1024];
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     const float defaultQueuePriority = 0.0f;
-    // make queue create info
-    std::optional<uint32_t> graphicsQueueIndex = physicalDeviceInfo.GetGraphicsQueueIndex();
-    std::optional<uint32_t> computeQueueIndex = physicalDeviceInfo.GetComputeQueueIndex();
-    std::optional<uint32_t> transferQueueIndex = physicalDeviceInfo.GetTransferQueueIndex();
+    // Make queue create info
+    _QueueFamilyIndices.graphics = VulkanTools::GetQueueFamilyIndex(physicalDeviceInfo._QueueFamilyProperties, VK_QUEUE_GRAPHICS_BIT);
+    _QueueFamilyIndices.compute = VulkanTools::GetQueueFamilyIndex(physicalDeviceInfo._QueueFamilyProperties, VK_QUEUE_COMPUTE_BIT);
+    _QueueFamilyIndices.transfer = VulkanTools::GetQueueFamilyIndex(physicalDeviceInfo._QueueFamilyProperties, VK_QUEUE_TRANSFER_BIT);
+
     // Graphics queue
-    if (!graphicsQueueIndex.has_value()){
+    if (_QueueFamilyIndices.graphics == UINT32_MAX){
         sprintf(errormsg, "No graphics queue available for this device (%s) !", physicalDeviceInfo._PhysicalDeviceProperties.deviceName);
         VK_THROW_EXCEPT(errormsg);
     }
     // Compute queue
-    if (!computeQueueIndex.has_value()){
+    if (_QueueFamilyIndices.compute == UINT32_MAX){
         sprintf(errormsg, "No compute queue available for this device (%s) !", physicalDeviceInfo._PhysicalDeviceProperties.deviceName);
         VK_THROW_EXCEPT(errormsg);
     }
     // Dedicated transfer queue
-    if (!transferQueueIndex.has_value()){
+    if (_QueueFamilyIndices.transfer == UINT32_MAX){
         sprintf(errormsg, "No transfer queue available for this device (%s) !", physicalDeviceInfo._PhysicalDeviceProperties.deviceName);
         VK_THROW_EXCEPT(errormsg);
     }
-    _QueueFamilyIndices.graphics = graphicsQueueIndex.value();
-    _QueueFamilyIndices.compute = computeQueueIndex.value();
-    _QueueFamilyIndices.transfer = transferQueueIndex.value();
-
     queueCreateInfos.emplace_back(VkDeviceQueueCreateInfo{
         .sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
         .queueFamilyIndex = _QueueFamilyIndices.graphics,
@@ -187,9 +184,9 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
                 }
             }
         }
-
+        // find a queue just present
         if (presentQueueIndex == UINT32_MAX) {
-            sprintf(errormsg, "No transfer queue available for this device (%s) !", physicalDeviceInfo._PhysicalDeviceProperties.deviceName);
+            sprintf(errormsg, "No persent queue available for device (%s) and surface!", physicalDeviceInfo._PhysicalDeviceProperties.deviceName);
             VK_THROW_EXCEPT(errormsg);
         }
         if (graphicsQueueIndex != UINT32_MAX) {

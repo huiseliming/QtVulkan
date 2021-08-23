@@ -23,7 +23,7 @@ VkSurfaceKHR VulkanWindow::GetSurfaceKHR(VkInstance instance)
             .hinstance = (HINSTANCE)::GetModuleHandle(NULL),
             .hwnd = (HWND) winId(),
         };
-        VK_ASSERT_SUCCESSED(vkCreateWin32SurfaceKHR(*(_pGraphics->_Instance), &surfaceCI, nullptr, &_Surface));
+        VK_ASSERT_SUCCESSED(vkCreateWin32SurfaceKHR(instance, &surfaceCI, nullptr, &_Surface));
 #elif defined (VK_USE_PLATFORM_MACOS_MVK)
         VkMacOSSurfaceCreateInfoMVK surfaceCI{
             .sType = VK_STRUCTURE_TYPE_MACOS_SURFACE_CREATE_INFO_MVK,

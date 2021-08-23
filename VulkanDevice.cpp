@@ -64,40 +64,9 @@ uint64_t VulkanPhysicalDeviceInfo::GetDeviceLocalMemorySize()
     return deviceLocalMemorySize;
 }
 
-std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetGraphicsQueueIndex()
+VulkanDevice::~VulkanDevice()
 {
-    VkQueueFlags graphicsQueueFlags = VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
-    for (uint32_t i = 0; i < _QueueFamilyProperties.size(); i++) {
-        if ((_QueueFamilyProperties[i].queueFlags & graphicsQueueFlags) == graphicsQueueFlags) {
-            return i;
-        }
-    }
-    return std::optional<uint32_t>();
-}
-
-std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetComputeQueueIndex()
-{
-    VkQueueFlags computeQueueFlags = VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT;
-    for (uint32_t i = 0; i < _QueueFamilyProperties.size(); i++) {
-        if ((_QueueFamilyProperties[i].queueFlags & computeQueueFlags) == computeQueueFlags &&
-                !(_QueueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
-            return i;
-        }
-    }
-    return std::optional<uint32_t>();
-}
-
-std::optional<uint32_t> VulkanPhysicalDeviceInfo::GetTransferQueueIndex()
-{
-    VkQueueFlags TransferQueueFlags =  VK_QUEUE_TRANSFER_BIT;
-    for (uint32_t i = 0; i < _QueueFamilyProperties.size(); i++) {
-        if ((_QueueFamilyProperties[i].queueFlags & TransferQueueFlags) == TransferQueueFlags &&
-                !(_QueueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT) &&
-                !(_QueueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
-            return i;
-        }
-    }
-    return std::optional<uint32_t>();
+    DestroyDevice();
 }
 
 void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames, std::vector<const char*> enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)

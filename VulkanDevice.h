@@ -19,10 +19,6 @@ struct VulkanPhysicalDeviceInfo
     VulkanPhysicalDeviceInfo &operator=(VulkanPhysicalDeviceInfo&&);
 
     uint64_t GetDeviceLocalMemorySize();
-    std::optional<uint32_t> GetGraphicsQueueIndex();
-    std::optional<uint32_t> GetComputeQueueIndex();
-    std::optional<uint32_t> GetTransferQueueIndex();
-
 
     VkPhysicalDevice _PhysicalDevice{VK_NULL_HANDLE};
     VkPhysicalDeviceProperties _PhysicalDeviceProperties;
@@ -40,6 +36,8 @@ struct VulkanDevice
     VulkanDevice(VulkanDevice&&) = delete;
     VulkanDevice& operator=(const VulkanDevice&) = delete;
     VulkanDevice& operator=(VulkanDevice&&) = delete;
+    
+    virtual ~VulkanDevice();
 
     struct {
         uint32_t graphics{UINT32_MAX};

@@ -20,13 +20,13 @@ struct VulkanPhysicalDeviceInfo
 
     uint64_t GetDeviceLocalMemorySize();
 
-    VkPhysicalDevice _PhysicalDevice{VK_NULL_HANDLE};
-    VkPhysicalDeviceProperties _PhysicalDeviceProperties;
-    VkPhysicalDeviceFeatures _PhysicalDeviceFeatures;
-    VkPhysicalDeviceMemoryProperties _PhysicalDeviceMemoryProperties;
-    std::vector<VkQueueFamilyProperties> _QueueFamilyProperties;
-    std::vector<VkExtensionProperties> _SupportedExtensionProperties;
-    std::vector<VkLayerProperties> _SupportedLayerProperties;
+    VkPhysicalDevice PhysicalDevice{VK_NULL_HANDLE};
+    VkPhysicalDeviceProperties PhysicalDeviceProperties;
+    VkPhysicalDeviceFeatures PhysicalDeviceFeatures;
+    VkPhysicalDeviceMemoryProperties PhysicalDeviceMemoryProperties;
+    std::vector<VkQueueFamilyProperties> QueueFamilyProperties;
+    std::vector<VkExtensionProperties> SupportedExtensionProperties;
+    std::vector<VkLayerProperties> SupportedLayerProperties;
 };
 
 struct VulkanDevice
@@ -45,12 +45,12 @@ struct VulkanDevice
         uint32_t compute{UINT32_MAX};
         uint32_t transfer{UINT32_MAX};
         uint32_t present{UINT32_MAX};
-    } _QueueFamilyIndices;
+    } QueueFamilyIndices;
 
-    VulkanQueue _GraphicsQueue;
-    VulkanQueue _ComputeQueue;
-    VulkanQueue _TransferQueue;
-    VulkanQueue _PresentQueue;
+    VulkanQueue GraphicsQueue;
+    VulkanQueue ComputeQueue;
+    VulkanQueue TransferQueue;
+    VulkanQueue PresentQueue;
 
     void CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames ={}, std::vector<const char*> enabledExtensionNames = {}, VkPhysicalDeviceFeatures enabledFeatures = {});
     void DestroyDevice();
@@ -59,8 +59,8 @@ public:
     static std::vector<VkPhysicalDevice> GetPhysicalDevices(VulkanInstance& instance);
 
 public:
-    VkPhysicalDevice _PhysicalDevice{VK_NULL_HANDLE};
-    VkDevice _Device{VK_NULL_HANDLE};
+    VkPhysicalDevice PhysicalDevice{VK_NULL_HANDLE};
+    VkDevice Device{VK_NULL_HANDLE};
 
 };
 

@@ -17,10 +17,10 @@ struct VulkanInstance
 
     ~VulkanInstance();
 
-    operator VkInstance() const { return _Instance; }
+    operator VkInstance() const { return Instance; }
     operator bool() const { return this->IsValid(); }
 
-    bool IsValid() const { return _Instance != VK_NULL_HANDLE;}
+    bool IsValid() const { return Instance != VK_NULL_HANDLE;}
     bool IsEnableLayer(const char * LayerName);
     bool IsEnableExtension(const char * ExtensionName);
     bool IsEnableValidationLayer();
@@ -33,12 +33,12 @@ private:
     void CreateDebugReporter();
     void DestroyDebugReporter();
 
-    VkDebugReportCallbackEXT _fpDebugReportCallbackEXT{VK_NULL_HANDLE};
+    VkDebugReportCallbackEXT fpDebugReportCallbackEXT{VK_NULL_HANDLE};
 
     //bool _EnableValidationLayer{true};
-    std::vector<const char*> _EnabledInstanceLayers;
-    std::vector<const char*> _EnabledInstanceExtenisons;
-    VkInstance _Instance{VK_NULL_HANDLE};
+    std::vector<const char*> EnabledInstanceLayers;
+    std::vector<const char*> EnabledInstanceExtenisons;
+    VkInstance Instance{VK_NULL_HANDLE};
 public:
     static std::vector<VkLayerProperties> EnumerateInstanceLayerProperties();
     static std::vector<VkExtensionProperties> EnumerateInstanceExtensionProperties(const char* pLayerName = nullptr);

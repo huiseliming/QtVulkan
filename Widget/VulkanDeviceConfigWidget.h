@@ -23,17 +23,17 @@ public slots:
     void OnCreateDeviceButtonClicked();
 
 private:
-    QListWidget* _pLayerNameListWidget{nullptr};
-    QListWidget* _pExtensionNameListWidget{nullptr};
-    QTextBrowser* _pTextBrowser{nullptr};
+    QListWidget* pLayerNameListWidget{nullptr};
+    QListWidget* pExtensionNameListWidget{nullptr};
+    QTextBrowser* pTextBrowser{nullptr};
 
-    std::vector<VkPhysicalDevice> _PhysicalDevices;
-    std::vector<VulkanPhysicalDeviceInfo> _PhysicalDeviceInfos;
+    std::vector<VkPhysicalDevice> PhysicalDevices;
+    std::vector<VulkanPhysicalDeviceInfo> PhysicalDeviceInfos;
 
-    uint32_t _SelectedDeviceIndex = UINT32_MAX;
-    std::vector<const char*> _LayerNames;
-    std::vector<const char*> _ExtensionNames;
-    MainWindow* _pMainWindow{nullptr};
+    uint32_t SelectedDeviceIndex = UINT32_MAX;
+    std::vector<const char*> LayerNames;
+    std::vector<const char*> ExtensionNames;
+    MainWindow* pMainWindow{nullptr};
 
 signals:
 

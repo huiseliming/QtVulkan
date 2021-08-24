@@ -6,45 +6,45 @@
 
 VulkanGraphics::~VulkanGraphics()
 {
-    _Device.reset();
-    _Surface.reset();
-    _Instance.reset();
+    pDevice.reset();
+    pSurface.reset();
+    pInstance.reset();
 }
 
 void VulkanGraphics::CreateInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions)
 {
-    _Instance = std::make_unique<VulkanInstance>(enabledInstanceLayers, enabledInstanceExtensions);
+    pInstance = std::make_unique<VulkanInstance>(enabledInstanceLayers, enabledInstanceExtensions);
 }
 
 void VulkanGraphics::CreateDevice(VulkanPhysicalDeviceInfo &physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char *>& enabledLayerNames, std::vector<const char *>& enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)
 {
     assert(surface != VK_NULL_HANDLE);
-    _Surface = std::move(std::unique_ptr<VkSurfaceKHR, std::function<void (VkSurfaceKHR*)>>
+    pSurface = std::move(std::unique_ptr<VkSurfaceKHR, std::function<void (VkSurfaceKHR*)>>
         (new VkSurfaceKHR{surface},[this](VkSurfaceKHR* pSurface) {
-            vkDestroySurfaceKHR(*_Instance, *pSurface, nullptr);
+            vkDestroySurfaceKHR(*pInstance, *pSurface, nullptr);
             delete pSurface;
         }));
-    _Device = std::make_unique<VulkanDevice>();
-    _Device->CreateDevice(physicalDeviceInfo, surface, enabledLayerNames, enabledExtensionNames, enabledFeatures);
+    pDevice = std::make_unique<VulkanDevice>();
+    pDevice->CreateDevice(physicalDeviceInfo, surface, enabledLayerNames, enabledExtensionNames, enabledFeatures);
 }
 
 void VulkanGraphics::CreateSwapchain()
 {
     SwapChainSupportDetails swapchainSupport = QuerySwapchainSupport();
-    VkSurfaceFormatKHR surfaceFormat = GetAvailableFormat(swapchainSupport._SurfaceFormats);
-    VkPresentModeKHR presentMode = GetAvailablePresentMode(swapchainSupport._PresentModes);
-    VkExtent2D extent = GetAvailableExtent(swapchainSupport._SurfaceCapabilities);
-    uint32_t swapchainMinImageCount_ = swapchainSupport._SurfaceCapabilities.minImageCount + 1;
-    if (swapchainSupport._SurfaceCapabilities.maxImageCount > 0 &&
-        swapchainMinImageCount_ > swapchainSupport._SurfaceCapabilities.maxImageCount)
-        swapchainMinImageCount_ = swapchainSupport._SurfaceCapabilities.maxImageCount;
-    VkSwapchainKHR oldSwapchainKHR = *_Swapchain;
+    VkSurfaceFormatKHR surfaceFormat = GetAvailableFormat(swapchainSupport.SurfaceFormats);
+    VkPresentModeKHR presentMode = GetAvailablePresentMode(swapchainSupport.PresentModes);
+    VkExtent2D extent = GetAvailableExtent(swapchainSupport.SurfaceCapabilities);
+    uint32_t swapchainMinImageCount_ = swapchainSupport.SurfaceCapabilities.minImageCount + 1;
+    if (swapchainSupport.SurfaceCapabilities.maxImageCount > 0 &&
+        swapchainMinImageCount_ > swapchainSupport.SurfaceCapabilities.maxImageCount)
+        swapchainMinImageCount_ = swapchainSupport.SurfaceCapabilities.maxImageCount;
+    VkSwapchainKHR oldSwapchainKHR = *pSwapchain;
     VkSurfaceTransformFlagBitsKHR preTranform{};
 
-    if ((swapchainSupport._SurfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) != 0) {
+    if ((swapchainSupport.SurfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) != 0) {
         preTranform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
     } else {
-        preTranform = swapchainSupport._SurfaceCapabilities.currentTransform;
+        preTranform = swapchainSupport.SurfaceCapabilities.currentTransform;
     }
 
     VkCompositeAlphaFlagBitsKHR compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -61,7 +61,7 @@ void VulkanGraphics::CreateSwapchain()
     } else {
         // TODO: print warn
         for (auto &compositeAlphaFlag : compositeAlphaFlags) {
-            if (swapchainSupport._SurfaceCapabilities.supportedCompositeAlpha & compositeAlphaFlag) {
+            if (swapchainSupport.SurfaceCapabilities.supportedCompositeAlpha & compositeAlphaFlag) {
                 compositeAlpha = compositeAlphaFlag;
                 break;
             };
@@ -70,7 +70,7 @@ void VulkanGraphics::CreateSwapchain()
 
     VkSwapchainCreateInfoKHR swapchainCI{
         .sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-        .surface = *_Surface,
+        .surface = *pSurface,
         .minImageCount = swapchainMinImageCount_,
         .imageFormat = surfaceFormat.format,
         .imageColorSpace = surfaceFormat.colorSpace,
@@ -86,8 +86,8 @@ void VulkanGraphics::CreateSwapchain()
         .clipped = VK_TRUE,
         .oldSwapchain = oldSwapchainKHR,
     };
-    uint32_t queueFamilyIndices[] = {_Device->_QueueFamilyIndices.graphics, _Device->_QueueFamilyIndices.present};
-    if (_Device->_QueueFamilyIndices.graphics != _Device->_QueueFamilyIndices.present) {
+    uint32_t queueFamilyIndices[] = {pDevice->QueueFamilyIndices.graphics, pDevice->QueueFamilyIndices.present};
+    if (pDevice->QueueFamilyIndices.graphics != pDevice->QueueFamilyIndices.present) {
         swapchainCI.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         swapchainCI.queueFamilyIndexCount = 2;
         swapchainCI.pQueueFamilyIndices = queueFamilyIndices;
@@ -111,18 +111,18 @@ void VulkanGraphics::CreateSwapchain()
 SwapChainSupportDetails VulkanGraphics::QuerySwapchainSupport()
 {
     SwapChainSupportDetails details;
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_Device->_PhysicalDevice, *_Surface, &details._SurfaceCapabilities);
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(pDevice->PhysicalDevice, *pSurface, &details.SurfaceCapabilities);
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(_Device->_PhysicalDevice, *_Surface, &formatCount, nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(pDevice->PhysicalDevice, *pSurface, &formatCount, nullptr);
     if (formatCount != 0) {
-        details._SurfaceFormats.resize(formatCount);
-        vkGetPhysicalDeviceSurfaceFormatsKHR(_Device->_PhysicalDevice, *_Surface, &formatCount, details._SurfaceFormats.data());
+        details.SurfaceFormats.resize(formatCount);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(pDevice->PhysicalDevice, *pSurface, &formatCount, details.SurfaceFormats.data());
     }
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(_Device->_PhysicalDevice, *_Surface, &presentModeCount, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(pDevice->PhysicalDevice, *pSurface, &presentModeCount, nullptr);
     if (presentModeCount != 0) {
-        details._PresentModes.resize(presentModeCount);
-        vkGetPhysicalDeviceSurfacePresentModesKHR(_Device->_PhysicalDevice, *_Surface, &presentModeCount, details._PresentModes.data());
+        details.PresentModes.resize(presentModeCount);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(pDevice->PhysicalDevice, *pSurface, &presentModeCount, details.PresentModes.data());
     }
     return details;
 }

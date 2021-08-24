@@ -11,9 +11,9 @@
 #include <vulkan/vulkan_core.h>
 
 struct SwapChainSupportDetails {
-    VkSurfaceCapabilitiesKHR _SurfaceCapabilities;
-    std::vector<VkSurfaceFormatKHR> _SurfaceFormats;
-    std::vector<VkPresentModeKHR> _PresentModes;
+    VkSurfaceCapabilitiesKHR SurfaceCapabilities;
+    std::vector<VkSurfaceFormatKHR> SurfaceFormats;
+    std::vector<VkPresentModeKHR> PresentModes;
 };
 
 struct VulkanGraphics
@@ -24,15 +24,15 @@ struct VulkanGraphics
     void CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*>& enabledLayerNames, std::vector<const char*>& enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures);
     void CreateSwapchain();
 
-    std::unique_ptr<VulkanInstance> _Instance;
-    std::unique_ptr<VkSurfaceKHR, std::function<void (VkSurfaceKHR*)>> _Surface;
-    std::unique_ptr<VulkanDevice> _Device;
-    std::unique_ptr<VulkanSwapchain> _Swapchain;
+    std::unique_ptr<VulkanInstance> pInstance;
+    std::unique_ptr<VkSurfaceKHR, std::function<void (VkSurfaceKHR*)>> pSurface;
+    std::unique_ptr<VulkanDevice> pDevice;
+    std::unique_ptr<VulkanSwapchain> pSwapchain;
 
-    const VulkanQueue& GraphicsQueue() { return _Device->_GraphicsQueue; }
-    const VulkanQueue& ComputeQueue()  { return _Device->_ComputeQueue; }
-    const VulkanQueue& TransferQueue() { return _Device->_TransferQueue; }
-    const VulkanQueue& PresentQueue()  { return _Device->_PresentQueue; }
+    const VulkanQueue& GraphicsQueue() { return pDevice->GraphicsQueue; }
+    const VulkanQueue& ComputeQueue()  { return pDevice->ComputeQueue; }
+    const VulkanQueue& TransferQueue() { return pDevice->TransferQueue; }
+    const VulkanQueue& PresentQueue()  { return pDevice->PresentQueue; }
 
     SwapChainSupportDetails QuerySwapchainSupport();
     VkSurfaceFormatKHR GetAvailableFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats);

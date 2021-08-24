@@ -12,11 +12,11 @@
 
 VulkanDeviceConfigWidget::VulkanDeviceConfigWidget(QWidget *parent)
     : QWidget(parent)
-    , _pMainWindow(reinterpret_cast<MainWindow*>(parent))
+    , pMainWindow(reinterpret_cast<MainWindow*>(parent))
 {
-    _PhysicalDevices = VulkanDevice::GetPhysicalDevices(*_pMainWindow->_pGraphics->_Instance.get());
-    for (uint32_t i = 0; i < _PhysicalDevices.size(); i++) {
-        _PhysicalDeviceInfos.emplace_back(VulkanPhysicalDeviceInfo(_PhysicalDevices[i]));
+    PhysicalDevices = VulkanDevice::GetPhysicalDevices(*pMainWindow->pGraphics->pInstance.get());
+    for (uint32_t i = 0; i < PhysicalDevices.size(); i++) {
+        PhysicalDeviceInfos.emplace_back(VulkanPhysicalDeviceInfo(PhysicalDevices[i]));
     }
     CreateVulkanDeviceSelector();
 }
@@ -28,75 +28,75 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
     vBoxLayout->addLayout(topHBoxLayout);
     {
         QListWidget* listWidget = new QListWidget(this);
-        for (uint32_t i = 0; i < _PhysicalDevices.size(); i++) {
+        for (uint32_t i = 0; i < PhysicalDevices.size(); i++) {
             QRadioButton* radioButton = new QRadioButton(this);
-            radioButton->setText(_PhysicalDeviceInfos[i]._PhysicalDeviceProperties.deviceName);
+            radioButton->setText(PhysicalDeviceInfos[i].PhysicalDeviceProperties.deviceName);
             QListWidgetItem* listWidgetItem = new QListWidgetItem();
             listWidget->addItem(listWidgetItem);
             listWidget->setItemWidget(listWidgetItem, radioButton);
             QObject::connect(radioButton, &QRadioButton::clicked, [this, i] {
-                auto selectedPhysicalDeviceInfo = _PhysicalDeviceInfos[i];
-                _SelectedDeviceIndex = i;
+                auto selectedPhysicalDeviceInfo = PhysicalDeviceInfos[i];
+                SelectedDeviceIndex = i;
 
                 // LayerName
-                _LayerNames.clear();
-                _pLayerNameListWidget->clear();
-                for (uint32_t j = 0; j < selectedPhysicalDeviceInfo._SupportedLayerProperties.size(); j++) {
+                LayerNames.clear();
+                pLayerNameListWidget->clear();
+                for (uint32_t j = 0; j < selectedPhysicalDeviceInfo.SupportedLayerProperties.size(); j++) {
                     QCheckBox* checkBox = new QCheckBox();
-                    checkBox->setText(selectedPhysicalDeviceInfo._SupportedLayerProperties[j].layerName);
+                    checkBox->setText(selectedPhysicalDeviceInfo.SupportedLayerProperties[j].layerName);
                     QListWidgetItem* listWidgetItem = new QListWidgetItem();
-                    _pLayerNameListWidget->addItem(listWidgetItem);
-                    _pLayerNameListWidget->setItemWidget(listWidgetItem, checkBox);
+                    pLayerNameListWidget->addItem(listWidgetItem);
+                    pLayerNameListWidget->setItemWidget(listWidgetItem, checkBox);
                     QObject::connect(checkBox, &QCheckBox::stateChanged, [this, i, j] (int state) {
-                        auto selectedPhysicalDeviceInfo = _PhysicalDeviceInfos[i];
+                        auto selectedPhysicalDeviceInfo = PhysicalDeviceInfos[i];
                         if (state == Qt::CheckState::Checked) {
-                            _LayerNames.push_back(selectedPhysicalDeviceInfo._SupportedLayerProperties[j].layerName);
+                            LayerNames.push_back(selectedPhysicalDeviceInfo.SupportedLayerProperties[j].layerName);
                         }else{
-                            _LayerNames.erase(std::remove(std::begin(_LayerNames), std::end(_LayerNames), selectedPhysicalDeviceInfo._SupportedLayerProperties[j].layerName), _LayerNames.end());
+                            LayerNames.erase(std::remove(std::begin(LayerNames), std::end(LayerNames), selectedPhysicalDeviceInfo.SupportedLayerProperties[j].layerName), LayerNames.end());
                         }
                     });
                 }
 
                 // ExtensionName
-                _ExtensionNames.clear();
-                _pExtensionNameListWidget->clear();
-                for (uint32_t j = 0; j < selectedPhysicalDeviceInfo._SupportedExtensionProperties.size(); j++) {
+                ExtensionNames.clear();
+                pExtensionNameListWidget->clear();
+                for (uint32_t j = 0; j < selectedPhysicalDeviceInfo.SupportedExtensionProperties.size(); j++) {
                     QCheckBox* checkBox = new QCheckBox();
-                    checkBox->setText(selectedPhysicalDeviceInfo._SupportedExtensionProperties[j].extensionName);
+                    checkBox->setText(selectedPhysicalDeviceInfo.SupportedExtensionProperties[j].extensionName);
                     QListWidgetItem* listWidgetItem = new QListWidgetItem();
-                    _pExtensionNameListWidget->addItem(listWidgetItem);
-                    _pExtensionNameListWidget->setItemWidget(listWidgetItem, checkBox);
+                    pExtensionNameListWidget->addItem(listWidgetItem);
+                    pExtensionNameListWidget->setItemWidget(listWidgetItem, checkBox);
                     QObject::connect(checkBox, &QCheckBox::stateChanged, [this, i, j] (int state) {
-                        auto selectedPhysicalDeviceInfo = _PhysicalDeviceInfos[i];
+                        auto selectedPhysicalDeviceInfo = PhysicalDeviceInfos[i];
                         if (state == Qt::CheckState::Checked) {
-                            _ExtensionNames.push_back(selectedPhysicalDeviceInfo._SupportedExtensionProperties[j].extensionName);
+                            ExtensionNames.push_back(selectedPhysicalDeviceInfo.SupportedExtensionProperties[j].extensionName);
                         }else{
-                            _ExtensionNames.erase(std::remove(std::begin(_ExtensionNames), std::end(_ExtensionNames), selectedPhysicalDeviceInfo._SupportedExtensionProperties[j].extensionName), _ExtensionNames.end());
+                            ExtensionNames.erase(std::remove(std::begin(ExtensionNames), std::end(ExtensionNames), selectedPhysicalDeviceInfo.SupportedExtensionProperties[j].extensionName), ExtensionNames.end());
                         }
                     });
                 }
 
                 QString infoText;
                 infoText.reserve(4096);
-                infoText += QString("DeviceType : %1\n").arg(VulkanTools::ToString(selectedPhysicalDeviceInfo._PhysicalDeviceProperties.deviceType));
+                infoText += QString("DeviceType : %1\n").arg(VulkanTools::ToString(selectedPhysicalDeviceInfo.PhysicalDeviceProperties.deviceType));
                 infoText += QString("DeviceLocalMemorySize : %1 MB\n").arg(static_cast<int32_t>(selectedPhysicalDeviceInfo.GetDeviceLocalMemorySize() / 1024UL / 1024UL));
-                for (uint32_t j = 0; j < selectedPhysicalDeviceInfo._QueueFamilyProperties.size(); j++) {
-                    infoText += QString("QueueCount : %1\n").arg(static_cast<int32_t>(selectedPhysicalDeviceInfo._QueueFamilyProperties[j].queueCount));
+                for (uint32_t j = 0; j < selectedPhysicalDeviceInfo.QueueFamilyProperties.size(); j++) {
+                    infoText += QString("QueueCount : %1\n").arg(static_cast<int32_t>(selectedPhysicalDeviceInfo.QueueFamilyProperties[j].queueCount));
                     infoText += "QueueFlag  : ";
                     std::vector<const char*> flagStrings;
-                    if(selectedPhysicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT){
+                    if(selectedPhysicalDeviceInfo.QueueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT){
                         flagStrings.push_back("Graphics");
                     }
-                    if(selectedPhysicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_COMPUTE_BIT){
+                    if(selectedPhysicalDeviceInfo.QueueFamilyProperties[j].queueFlags & VK_QUEUE_COMPUTE_BIT){
                         flagStrings.push_back("Compute");
                     }
-                    if(selectedPhysicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_TRANSFER_BIT){
+                    if(selectedPhysicalDeviceInfo.QueueFamilyProperties[j].queueFlags & VK_QUEUE_TRANSFER_BIT){
                         flagStrings.push_back("Transfer");
                     }
-                    if(selectedPhysicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_SPARSE_BINDING_BIT){
+                    if(selectedPhysicalDeviceInfo.QueueFamilyProperties[j].queueFlags & VK_QUEUE_SPARSE_BINDING_BIT){
                         flagStrings.push_back("SparseBinding");
                     }
-                    if(selectedPhysicalDeviceInfo._QueueFamilyProperties[j].queueFlags & VK_QUEUE_PROTECTED_BIT){
+                    if(selectedPhysicalDeviceInfo.QueueFamilyProperties[j].queueFlags & VK_QUEUE_PROTECTED_BIT){
                         flagStrings.push_back("Protected");
                     }
                     for (uint32_t k = 0; k < flagStrings.size() - 1; k++) {
@@ -106,23 +106,23 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
                     infoText += flagStrings[flagStrings.size() - 1];
                     infoText += "\n";
                 }
-                _pTextBrowser->setText(infoText);
+                pTextBrowser->setText(infoText);
             });
         }
         topHBoxLayout->addWidget(listWidget);
     }
     {
-        _pLayerNameListWidget = new QListWidget(this);
-        topHBoxLayout->addWidget(_pLayerNameListWidget);
-        _pExtensionNameListWidget = new QListWidget(this);
-        topHBoxLayout->addWidget(_pExtensionNameListWidget);
+        pLayerNameListWidget = new QListWidget(this);
+        topHBoxLayout->addWidget(pLayerNameListWidget);
+        pExtensionNameListWidget = new QListWidget(this);
+        topHBoxLayout->addWidget(pExtensionNameListWidget);
     }
 
     QHBoxLayout* centerHBoxLayout = new QHBoxLayout();
     vBoxLayout->addLayout(centerHBoxLayout);
 
-    _pTextBrowser = new QTextBrowser(this);
-    centerHBoxLayout->addWidget(_pTextBrowser);
+    pTextBrowser = new QTextBrowser(this);
+    centerHBoxLayout->addWidget(pTextBrowser);
 
     QHBoxLayout* bottomHBoxLayout = new QHBoxLayout();
     vBoxLayout->addLayout(bottomHBoxLayout);
@@ -136,5 +136,5 @@ void VulkanDeviceConfigWidget::CreateVulkanDeviceSelector()
 
 void VulkanDeviceConfigWidget::OnCreateDeviceButtonClicked()
 {
-    _pMainWindow->CreateVulkanDevice(_PhysicalDeviceInfos[_SelectedDeviceIndex], _LayerNames, _ExtensionNames, VkPhysicalDeviceFeatures{});
+    pMainWindow->CreateVulkanDevice(PhysicalDeviceInfos[SelectedDeviceIndex], LayerNames, ExtensionNames, VkPhysicalDeviceFeatures{});
 }

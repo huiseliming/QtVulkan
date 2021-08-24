@@ -26,15 +26,15 @@ public:
     void CreateVulkanDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, std::vector<const char*>& enabledLayerNames, std::vector<const char*>& enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures);
     
 public:
-    std::unique_ptr<VulkanGraphics> _pGraphics;
+    std::unique_ptr<VulkanGraphics> pGraphics;
 
 private:
     Ui::MainWindow *ui;
 
-    std::unique_ptr<VulkanWindow> _pVulkanWindow{nullptr};
+    std::unique_ptr<VulkanWindow> pVulkanWindow{nullptr};
 
-    VulkanInstanceConfigWidget* _pVulkanInstanceConfigWidget{nullptr};
-    VulkanDeviceConfigWidget* _pVulkanDeviceConfigWidget{nullptr};
+    VulkanInstanceConfigWidget* pVulkanInstanceConfigWidget{nullptr};
+    VulkanDeviceConfigWidget* pVulkanDeviceConfigWidget{nullptr};
 };
 
 extern MainWindow* GMainWindow;

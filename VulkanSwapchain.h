@@ -10,8 +10,8 @@ struct VulkanSwapchain{
     VulkanSwapchain(VulkanSwapchain&&) = delete;
     VulkanSwapchain& operator=(const VulkanSwapchain&) = delete;
     VulkanSwapchain& operator=(VulkanSwapchain&&) = delete;
-    operator VkSwapchainKHR() const { return _Swapchain; }
+    operator VkSwapchainKHR() const { return Swapchain; }
 
 
-    VkSwapchainKHR _Swapchain;
+    VkSwapchainKHR Swapchain;
 };

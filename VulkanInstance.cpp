@@ -57,9 +57,9 @@ VulkanInstance::~VulkanInstance()
 
 bool VulkanInstance::IsEnableLayer(const char *LayerName)
 {
-    for (uint32_t i = 0; i < _EnabledInstanceLayers.size(); i++)
+    for (uint32_t i = 0; i < EnabledInstanceLayers.size(); i++)
     {
-        if (strcmp(_EnabledInstanceLayers[i], LayerName) == 0) {
+        if (strcmp(EnabledInstanceLayers[i], LayerName) == 0) {
             return true;
         }
     }
@@ -68,9 +68,9 @@ bool VulkanInstance::IsEnableLayer(const char *LayerName)
 
 bool VulkanInstance::IsEnableExtension(const char *ExtensionName)
 {
-    for (uint32_t i = 0; i < _EnabledInstanceExtenisons.size(); i++)
+    for (uint32_t i = 0; i < EnabledInstanceExtenisons.size(); i++)
     {
-        if (strcmp(_EnabledInstanceExtenisons[i], ExtensionName) == 0) {
+        if (strcmp(EnabledInstanceExtenisons[i], ExtensionName) == 0) {
             return true;
         }
     }
@@ -89,9 +89,9 @@ bool VulkanInstance::IsEnableDebugReportExtension()
 
 void VulkanInstance::CreateInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions)
 {
-    assert(_Instance == VK_NULL_HANDLE);
-    _EnabledInstanceLayers = enabledInstanceLayers;
-    _EnabledInstanceExtenisons = enabledInstanceExtensions;
+    assert(Instance == VK_NULL_HANDLE);
+    EnabledInstanceLayers = enabledInstanceLayers;
+    EnabledInstanceExtenisons = enabledInstanceExtensions;
     uint32_t instanceVersion;
     vkEnumerateInstanceVersion(&instanceVersion);
 
@@ -109,12 +109,12 @@ void VulkanInstance::CreateInstance(std::vector<const char*>& enabledInstanceLay
         .pNext = nullptr,
         .flags = 0,
         .pApplicationInfo = &applicationInfo,
-        .enabledLayerCount = static_cast<uint32_t>(_EnabledInstanceLayers.size()),
-        .ppEnabledLayerNames = _EnabledInstanceLayers.data(),
-        .enabledExtensionCount = static_cast<uint32_t>(_EnabledInstanceExtenisons.size()),
-        .ppEnabledExtensionNames = _EnabledInstanceExtenisons.data(),
+        .enabledLayerCount = static_cast<uint32_t>(EnabledInstanceLayers.size()),
+        .ppEnabledLayerNames = EnabledInstanceLayers.data(),
+        .enabledExtensionCount = static_cast<uint32_t>(EnabledInstanceExtenisons.size()),
+        .ppEnabledExtensionNames = EnabledInstanceExtenisons.data(),
     };
-    VK_ASSERT_SUCCESSED(vkCreateInstance(&instanceCI, nullptr, &_Instance));
+    VK_ASSERT_SUCCESSED(vkCreateInstance(&instanceCI, nullptr, &Instance));
     if(IsEnableDebugReportExtension()){
         CreateDebugReporter();
     }
@@ -122,10 +122,10 @@ void VulkanInstance::CreateInstance(std::vector<const char*>& enabledInstanceLay
 
 void VulkanInstance::DestroyInstance() 
 {
-    if(_Instance != VK_NULL_HANDLE){
+    if(Instance != VK_NULL_HANDLE){
         DestroyDebugReporter();
-        vkDestroyInstance(_Instance, nullptr);
-        _Instance = VK_NULL_HANDLE;
+        vkDestroyInstance(Instance, nullptr);
+        Instance = VK_NULL_HANDLE;
     }
 }
 
@@ -140,20 +140,20 @@ void VulkanInstance::CreateDebugReporter()
         .pfnCallback = DebugReportCallbackEXT,
     };
     auto fpCreateDebugReportCallbackEXT = reinterpret_cast<PFN_vkCreateDebugReportCallbackEXT>(
-        vkGetInstanceProcAddr(_Instance, "vkCreateDebugReportCallbackEXT"));
+        vkGetInstanceProcAddr(Instance, "vkCreateDebugReportCallbackEXT"));
     assert(fpCreateDebugReportCallbackEXT != nullptr);
-    VK_ASSERT_SUCCESSED(fpCreateDebugReportCallbackEXT(_Instance, &DebugReportCallbackCI, nullptr, &_fpDebugReportCallbackEXT));
+    VK_ASSERT_SUCCESSED(fpCreateDebugReportCallbackEXT(Instance, &DebugReportCallbackCI, nullptr, &fpDebugReportCallbackEXT));
 }
 
 void VulkanInstance::DestroyDebugReporter() 
 {
-    if(_fpDebugReportCallbackEXT != VK_NULL_HANDLE)
+    if(fpDebugReportCallbackEXT != VK_NULL_HANDLE)
     {
         auto fpDestroyDebugReportCallbackEXT = reinterpret_cast<PFN_vkDestroyDebugReportCallbackEXT>(
-            vkGetInstanceProcAddr(_Instance, "vkDestroyDebugReportCallbackEXT"));
+            vkGetInstanceProcAddr(Instance, "vkDestroyDebugReportCallbackEXT"));
         assert(fpDestroyDebugReportCallbackEXT != nullptr);
-        fpDestroyDebugReportCallbackEXT(_Instance, _fpDebugReportCallbackEXT, nullptr);
-        _fpDebugReportCallbackEXT = VK_NULL_HANDLE;
+        fpDestroyDebugReportCallbackEXT(Instance, fpDebugReportCallbackEXT, nullptr);
+        fpDebugReportCallbackEXT = VK_NULL_HANDLE;
     }
 }
 

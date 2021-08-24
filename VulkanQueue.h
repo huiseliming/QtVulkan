@@ -14,10 +14,10 @@ struct VulkanQueue
     VulkanQueue& operator=(const VulkanQueue&);
     VulkanQueue& operator=(VulkanQueue&&);
 
-    operator VkQueue() const { return _Queue; }
-    VkQueue* AddressOf() { return &_Queue; }
+    operator VkQueue() const { return Queue; }
+    VkQueue* AddressOf() { return &Queue; }
 
-    VkQueue _Queue{VK_NULL_HANDLE};
+    VkQueue Queue{VK_NULL_HANDLE};
 };
 
 #endif // VULKANQUEUE_H

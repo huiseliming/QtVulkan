@@ -20,33 +20,33 @@ MainWindow::MainWindow(QWidget *parent)
 
     //, ui(new Ui::MainWindow)
 {
-    _pGraphics = std::make_unique<VulkanGraphics>();
+    pGraphics = std::make_unique<VulkanGraphics>();
     setMinimumSize(800,600);
     //ui->setupUi(this);
-    _pVulkanInstanceConfigWidget = new VulkanInstanceConfigWidget(this);
-    setCentralWidget(_pVulkanInstanceConfigWidget);
+    pVulkanInstanceConfigWidget = new VulkanInstanceConfigWidget(this);
+    setCentralWidget(pVulkanInstanceConfigWidget);
     //setSurfaceType(Surface::VulkanSurface);
 }
 
 MainWindow::~MainWindow()
 {
-    _pGraphics.reset();
+    pGraphics.reset();
     //delete ui;
 }
 
 void MainWindow::CreateVulkanInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions)
 {
-    _pGraphics->CreateInstance(enabledInstanceLayers, enabledInstanceExtensions);
-    _pVulkanDeviceConfigWidget = new VulkanDeviceConfigWidget(this);
-    setCentralWidget(_pVulkanDeviceConfigWidget);
-    _pVulkanInstanceConfigWidget->deleteLater();
+    pGraphics->CreateInstance(enabledInstanceLayers, enabledInstanceExtensions);
+    pVulkanDeviceConfigWidget = new VulkanDeviceConfigWidget(this);
+    setCentralWidget(pVulkanDeviceConfigWidget);
+    pVulkanInstanceConfigWidget->deleteLater();
 }
 
 void MainWindow::CreateVulkanDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, std::vector<const char*>& enabledLayerNames, std::vector<const char*>& enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)
 {
-    _pVulkanWindow = std::make_unique<VulkanWindow>();
-     _pGraphics->CreateDevice(physicalDeviceInfo, _pVulkanWindow->CreateSurfaceKHR(*_pGraphics->_Instance), enabledLayerNames, enabledExtensionNames, enabledFeatures);
-    QWidget *container = QWidget::createWindowContainer(_pVulkanWindow.get());
+    pVulkanWindow = std::make_unique<VulkanWindow>();
+     pGraphics->CreateDevice(physicalDeviceInfo, pVulkanWindow->CreateSurfaceKHR(*pGraphics->pInstance), enabledLayerNames, enabledExtensionNames, enabledFeatures);
+    QWidget *container = QWidget::createWindowContainer(pVulkanWindow.get());
     setCentralWidget(container);
-    _pVulkanDeviceConfigWidget->deleteLater();
+    pVulkanDeviceConfigWidget->deleteLater();
 }

@@ -22,11 +22,11 @@ public slots:
     void OnCreateInstanceButtonClicked();
     void OnDefaultSettingsButtonClicked();
 public:
-    std::vector<QCheckBox*> _InstanceLayerCheckBoxs;
-    std::vector<QCheckBox*> _InstanceExtensionCheckBoxs;
-    std::vector<VkLayerProperties> _InstanceLayerProperties;
-    std::vector<VkExtensionProperties> _InstanceExtensionProperties;
-    MainWindow* _pMainWindow{nullptr};
+    std::vector<QCheckBox*> InstanceLayerCheckBoxs;
+    std::vector<QCheckBox*> InstanceExtensionCheckBoxs;
+    std::vector<VkLayerProperties> InstanceLayerProperties;
+    std::vector<VkExtensionProperties> InstanceExtensionProperties;
+    MainWindow* pMainWindow{nullptr};
 
 signals:
 

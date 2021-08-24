@@ -17,12 +17,12 @@ public:
     const char *what() const noexcept override;
 
 private:
-    int _Line;
-    std::string _File;
-    std::string _Message;
+    int Line;
+    std::string File;
+    std::string Message;
 
 protected:
-    mutable std::string _Buffer;
+    mutable std::string Buffer;
 };
 
 

@@ -252,3 +252,22 @@ std::vector<VkPhysicalDevice> VulkanDevice::GetPhysicalDevices(VulkanInstance& i
     vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices.data());
     return physicalDevices;
 }
+
+VkImageView VulkanDevice::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)
+{
+    VkImageView imageView;
+    VkImageViewCreateInfo imageViewCI{.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+                                      .image = image,
+                                      .viewType = VK_IMAGE_VIEW_TYPE_2D,
+                                      .format = format,
+                                      .components = {},
+                                      .subresourceRange{
+                                          .aspectMask = aspectFlags,
+                                          .baseMipLevel = 0,
+                                          .levelCount = 1,
+                                          .baseArrayLayer = 0,
+                                          .layerCount = 1,
+                                      }};
+    VK_ASSERT_SUCCESSED(vkCreateImageView(Device, &imageViewCI, nullptr, &imageView));
+    return imageView;
+}

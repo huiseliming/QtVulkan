@@ -31,7 +31,7 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    std::unique_ptr<VulkanWindow> pVulkanWindow{nullptr};
+    QWidget* pGraphicsWidget{nullptr};
 
     VulkanInstanceConfigWidget* pVulkanInstanceConfigWidget{nullptr};
     VulkanDeviceConfigWidget* pVulkanDeviceConfigWidget{nullptr};

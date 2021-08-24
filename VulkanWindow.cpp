@@ -36,5 +36,11 @@ VkSurfaceKHR VulkanWindow::CreateSurfaceKHR(VkInstance instance)
 #endif
     return surface;
 }
-    
 
+VkExtent2D VulkanWindow::GetWindowExtent2D()
+{
+    return VkExtent2D{
+        .width = static_cast<uint32_t>(width()),
+        .height = static_cast<uint32_t>(height())
+    };
+}

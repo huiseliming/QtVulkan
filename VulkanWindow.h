@@ -11,7 +11,7 @@ public:
     VulkanWindow(QWindow* parent = nullptr);
     ~VulkanWindow();
 
-    void DestroySurface();
+    VkExtent2D GetWindowExtent2D();
 
     VkSurfaceKHR CreateSurfaceKHR(VkInstance instance);
 };

@@ -37,8 +37,9 @@ struct VulkanDevice
     VulkanDevice(VulkanDevice&&) = delete;
     VulkanDevice& operator=(const VulkanDevice&) = delete;
     VulkanDevice& operator=(VulkanDevice&&) = delete;
-    
     virtual ~VulkanDevice();
+
+    operator VkDevice() const { return Device; }
 
     struct {
         uint32_t graphics{UINT32_MAX};
@@ -55,12 +56,17 @@ struct VulkanDevice
     void CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames ={}, std::vector<const char*> enabledExtensionNames = {}, VkPhysicalDeviceFeatures enabledFeatures = {});
     void DestroyDevice();
 
+
+
 public:
     static std::vector<VkPhysicalDevice> GetPhysicalDevices(VulkanInstance& instance);
 
 public:
     VkPhysicalDevice PhysicalDevice{VK_NULL_HANDLE};
     VkDevice Device{VK_NULL_HANDLE};
+
+    VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+
 
 };
 

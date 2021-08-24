@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     //, ui(new Ui::MainWindow)
 {
     _pGraphics = std::make_unique<VulkanGraphics>();
+    setMinimumSize(800,600);
     //ui->setupUi(this);
     _pVulkanInstanceConfigWidget = new VulkanInstanceConfigWidget(this);
     setCentralWidget(_pVulkanInstanceConfigWidget);

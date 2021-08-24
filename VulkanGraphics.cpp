@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 #include <vulkan/vulkan_core.h>
+#include <cassert>
 
 VulkanGraphics::~VulkanGraphics()
 {

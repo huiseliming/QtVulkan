@@ -22,6 +22,11 @@ VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VkPhysicalDevice physicalDevi
     vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &DeviceExtensionPropertiesCount, nullptr);
     _SupportedExtensionProperties.resize(DeviceExtensionPropertiesCount);
     vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &DeviceExtensionPropertiesCount, _SupportedExtensionProperties.data());
+
+    uint32_t DeviceLayerPropertiesCount = 0;
+    vkEnumerateDeviceLayerProperties(physicalDevice, &DeviceLayerPropertiesCount, nullptr);
+    _SupportedLayerProperties.resize(DeviceLayerPropertiesCount);
+    vkEnumerateDeviceLayerProperties(physicalDevice, &DeviceLayerPropertiesCount, _SupportedLayerProperties.data());
 }
 
 VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VulkanPhysicalDeviceInfo &&other)
@@ -33,6 +38,7 @@ VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VulkanPhysicalDeviceInfo &&ot
     this->_PhysicalDeviceMemoryProperties = other._PhysicalDeviceMemoryProperties;
     this->_QueueFamilyProperties = std::move(other._QueueFamilyProperties);
     this->_SupportedExtensionProperties = std::move(other._SupportedExtensionProperties);
+    this->_SupportedLayerProperties = std::move(other._SupportedLayerProperties);
 }
 
 VulkanPhysicalDeviceInfo &VulkanPhysicalDeviceInfo::operator=(VulkanPhysicalDeviceInfo && other)
@@ -44,6 +50,7 @@ VulkanPhysicalDeviceInfo &VulkanPhysicalDeviceInfo::operator=(VulkanPhysicalDevi
     this->_PhysicalDeviceMemoryProperties = other._PhysicalDeviceMemoryProperties;
     this->_QueueFamilyProperties = std::move(other._QueueFamilyProperties);
     this->_SupportedExtensionProperties = std::move(other._SupportedExtensionProperties);
+    this->_SupportedLayerProperties = std::move(other._SupportedLayerProperties);
     return *this;
 }
 

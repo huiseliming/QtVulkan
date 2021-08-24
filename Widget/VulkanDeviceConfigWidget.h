@@ -17,14 +17,14 @@ class VulkanDeviceConfigWidget : public QWidget
 public:
     explicit VulkanDeviceConfigWidget(QWidget *parent = nullptr);
 
-
     void CreateVulkanDeviceSelector();
 
 public slots:
     void OnCreateDeviceButtonClicked();
 
 private:
-    QListWidget* _pExtensionListWidget{nullptr};
+    QListWidget* _pLayerNameListWidget{nullptr};
+    QListWidget* _pExtensionNameListWidget{nullptr};
     QTextBrowser* _pTextBrowser{nullptr};
 
     std::vector<VkPhysicalDevice> _PhysicalDevices;
@@ -34,7 +34,7 @@ private:
     std::vector<const char*> _LayerNames;
     std::vector<const char*> _ExtensionNames;
     MainWindow* _pMainWindow{nullptr};
-    
+
 signals:
 
 };

@@ -26,6 +26,7 @@ struct VulkanPhysicalDeviceInfo
     VkPhysicalDeviceMemoryProperties _PhysicalDeviceMemoryProperties;
     std::vector<VkQueueFamilyProperties> _QueueFamilyProperties;
     std::vector<VkExtensionProperties> _SupportedExtensionProperties;
+    std::vector<VkLayerProperties> _SupportedLayerProperties;
 };
 
 struct VulkanDevice

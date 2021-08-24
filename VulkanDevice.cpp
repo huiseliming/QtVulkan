@@ -190,11 +190,12 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
         return strcmp(enabledExtensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0;
     });
 
-    if(it != enabledExtensionNames.end()){
+    if(it == enabledExtensionNames.end()){
         enabledExtensionNames.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
     }
 
-
+    EnabledLayerNames = enabledLayerNames;
+    EnabledExtensionNames = enabledExtensionNames;
     VkDeviceCreateInfo deviceCI{
         .sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
         .pNext = nullptr,

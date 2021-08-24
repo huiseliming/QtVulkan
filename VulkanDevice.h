@@ -62,6 +62,8 @@ public:
     static std::vector<VkPhysicalDevice> GetPhysicalDevices(VulkanInstance& instance);
 
 public:
+    std::vector<const char*> EnabledExtensionNames;
+    std::vector<const char*> EnabledLayerNames;
     VkPhysicalDevice PhysicalDevice{VK_NULL_HANDLE};
     VkDevice Device{VK_NULL_HANDLE};
 

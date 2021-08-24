@@ -55,6 +55,7 @@ endif()
 # vulkan define
 if(WIN32)
     target_compile_definitions(QtVulkan PUBLIC VK_USE_PLATFORM_WIN32_KHR)
+    target_compile_definitions(QtVulkan PUBLIC NOMINMAX)
 elseif(APPLE)
     target_compile_definitions(QtVulkan PUBLIC VK_USE_PLATFORM_MACOS_MVK)
 endif()

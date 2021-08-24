@@ -1,5 +1,6 @@
 #include "VulkanSwapchain.h"
 #include "VulkanGraphics.h"
+#include <cassert>
 
 VulkanSwapchain::VulkanSwapchain(VulkanDevice& device)
     :Device(device)

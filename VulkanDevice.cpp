@@ -33,6 +33,7 @@ VulkanPhysicalDeviceInfo::VulkanPhysicalDeviceInfo(VulkanPhysicalDeviceInfo &&ot
 {
     assert(std::addressof(other) != this);
     this->_PhysicalDevice = other._PhysicalDevice;
+    other._PhysicalDevice = VK_NULL_HANDLE;
     this->_PhysicalDeviceProperties = other._PhysicalDeviceProperties;
     this->_PhysicalDeviceFeatures = other._PhysicalDeviceFeatures;
     this->_PhysicalDeviceMemoryProperties = other._PhysicalDeviceMemoryProperties;
@@ -45,6 +46,7 @@ VulkanPhysicalDeviceInfo &VulkanPhysicalDeviceInfo::operator=(VulkanPhysicalDevi
 {
     assert(std::addressof(other) != this);
     this->_PhysicalDevice = other._PhysicalDevice;
+    other._PhysicalDevice = VK_NULL_HANDLE;
     this->_PhysicalDeviceProperties = other._PhysicalDeviceProperties;
     this->_PhysicalDeviceFeatures = other._PhysicalDeviceFeatures;
     this->_PhysicalDeviceMemoryProperties = other._PhysicalDeviceMemoryProperties;

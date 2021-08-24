@@ -46,5 +46,7 @@ void MainWindow::CreateVulkanDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo
 {
     _pVulkanWindow = std::make_unique<VulkanWindow>();
      _pGraphics->CreateDevice(physicalDeviceInfo, _pVulkanWindow->CreateSurfaceKHR(*_pGraphics->_Instance), enabledLayerNames, enabledExtensionNames, enabledFeatures);
+    QWidget *container = QWidget::createWindowContainer(_pVulkanWindow.get());
+    setCentralWidget(container);
     _pVulkanDeviceConfigWidget->deleteLater();
 }

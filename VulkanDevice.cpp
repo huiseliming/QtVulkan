@@ -82,6 +82,7 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
 {
     assert(_Device == VK_NULL_HANDLE);
     assert(surface != VK_NULL_HANDLE);
+    _PhysicalDevice = physicalDeviceInfo._PhysicalDevice;
     static char errormsg[1024];
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     const float defaultQueuePriority = 0.0f;

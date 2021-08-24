@@ -59,7 +59,8 @@ public:
     static std::vector<VkPhysicalDevice> GetPhysicalDevices(VulkanInstance& instance);
 
 public:
-    VkDevice _Device;
+    VkPhysicalDevice _PhysicalDevice{VK_NULL_HANDLE};
+    VkDevice _Device{VK_NULL_HANDLE};
 
 };
 

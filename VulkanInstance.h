@@ -27,8 +27,8 @@ struct VulkanInstance
     bool IsEnableDebugReportExtension();
 
 private:
-    void CreateInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions);
-    void DestroyInstance();
+    void Create(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions);
+    void Destroy();
 
     void CreateDebugReporter();
     void DestroyDebugReporter();

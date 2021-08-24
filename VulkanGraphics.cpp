@@ -37,7 +37,7 @@ void VulkanGraphics::CreateDevice(VulkanPhysicalDeviceInfo &physicalDeviceInfo, 
             delete pSurface;
         }));
     pDevice = std::make_unique<VulkanDevice>();
-    pDevice->CreateDevice(physicalDeviceInfo, surface, enabledLayerNames, enabledExtensionNames, enabledFeatures);
+    pDevice->Create(physicalDeviceInfo, surface, enabledLayerNames, enabledExtensionNames, enabledFeatures);
 }
 
 void VulkanGraphics::Initialize()

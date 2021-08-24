@@ -21,6 +21,8 @@ struct VulkanSwapchain{
     
     void Create(VkSurfaceKHR surface, SwapChainSupportDetails swapchainSupport, VkExtent2D windowExtent2D);
     
+    void Destroy();
+
     void CreateImageViews();
 
     void DestroyImageViews();

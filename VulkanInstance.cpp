@@ -24,7 +24,7 @@ static VkBool32 DebugReportCallbackEXT( VkDebugReportFlagsEXT flags,
 
 VulkanInstance::VulkanInstance(std::vector<const char*> enabledInstanceLayers, std::vector<const char*> enabledInstanceExtensions)
 {
-    CreateInstance(enabledInstanceLayers, enabledInstanceExtensions);
+    Create(enabledInstanceLayers, enabledInstanceExtensions);
 }
 
 //VulkanInstance::VulkanInstance(VulkanInstance&& otherInstance)
@@ -52,7 +52,7 @@ VulkanInstance::VulkanInstance(std::vector<const char*> enabledInstanceLayers, s
 
 VulkanInstance::~VulkanInstance() 
 {
-    DestroyInstance();
+    Destroy();
 }
 
 bool VulkanInstance::IsEnableLayer(const char *LayerName)
@@ -87,7 +87,7 @@ bool VulkanInstance::IsEnableDebugReportExtension()
     return IsEnableExtension(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 }
 
-void VulkanInstance::CreateInstance(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions)
+void VulkanInstance::Create(std::vector<const char*>& enabledInstanceLayers, std::vector<const char*>& enabledInstanceExtensions)
 {
     assert(Instance == VK_NULL_HANDLE);
     EnabledInstanceLayers = enabledInstanceLayers;
@@ -120,7 +120,7 @@ void VulkanInstance::CreateInstance(std::vector<const char*>& enabledInstanceLay
     }
 }
 
-void VulkanInstance::DestroyInstance() 
+void VulkanInstance::Destroy() 
 {
     if(Instance != VK_NULL_HANDLE){
         DestroyDebugReporter();

@@ -75,10 +75,10 @@ uint64_t VulkanPhysicalDeviceInfo::GetDeviceLocalMemorySize()
 
 VulkanDevice::~VulkanDevice()
 {
-    DestroyDevice();
+    Destroy();
 }
 
-void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames, std::vector<const char*> enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)
+void VulkanDevice::Create(VulkanPhysicalDeviceInfo& physicalDeviceInfo, VkSurfaceKHR surface, std::vector<const char*> enabledLayerNames, std::vector<const char*> enabledExtensionNames, VkPhysicalDeviceFeatures enabledFeatures)
 {
     assert(Device == VK_NULL_HANDLE);
     assert(surface != VK_NULL_HANDLE);
@@ -237,7 +237,7 @@ void VulkanDevice::CreateDevice(VulkanPhysicalDeviceInfo& physicalDeviceInfo, Vk
     }
 }
 
-void VulkanDevice::DestroyDevice() 
+void VulkanDevice::Destroy() 
 {
     if(Device != VK_NULL_HANDLE){
         vkDestroyDevice(Device,nullptr);

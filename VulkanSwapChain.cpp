@@ -1,6 +1,7 @@
 #include "VulkanSwapchain.h"
 #include "VulkanGraphics.h"
 #include <cassert>
+#include <vulkan/vulkan_core.h>
 
 VulkanSwapchain::VulkanSwapchain(VulkanDevice& device)
     :Device(device)
@@ -9,10 +10,7 @@ VulkanSwapchain::VulkanSwapchain(VulkanDevice& device)
 
 VulkanSwapchain::~VulkanSwapchain()
 {
-    if (Swapchain != VK_NULL_HANDLE) {
-        DestroyImageViews();
-        vkDestroySwapchainKHR(Device, Swapchain, nullptr);
-    }
+    Destroy();
 }
 
 void VulkanSwapchain::Create(VkSurfaceKHR surface, SwapChainSupportDetails swapchainSupport, VkExtent2D windowExtent2D)
@@ -92,6 +90,15 @@ void VulkanSwapchain::Create(VkSurfaceKHR surface, SwapChainSupportDetails swapc
     SwapchainImages.resize(SwapchainImageCount);
     vkGetSwapchainImagesKHR(Device, Swapchain, &SwapchainImageCount, SwapchainImages.data());
     CreateImageViews();
+}
+
+void VulkanSwapchain::Destroy()
+{
+    if (Swapchain != VK_NULL_HANDLE) {
+        DestroyImageViews();
+        vkDestroySwapchainKHR(Device, Swapchain, nullptr);
+        Swapchain = VK_NULL_HANDLE;
+    }
 }
 
 void VulkanSwapchain::CreateImageViews()

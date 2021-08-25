@@ -20,7 +20,7 @@ struct VulkanSwapchain{
     operator VkSwapchainKHR() const { return Swapchain; }
     
     void Create(VkSurfaceKHR surface, SwapChainSupportDetails swapchainSupport, VkExtent2D windowExtent2D);
-    
+
     void Destroy();
 
     void CreateImageViews();

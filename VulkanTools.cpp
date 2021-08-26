@@ -1,7 +1,28 @@
 #include "VulkanTools.h"
+#include <fstream>
 
 namespace VulkanTools
 {
+const std::string& GetShadersPath() 
+{
+    static std::string ShadersPath;
+    return ShadersPath;    
+}
+
+std::vector<uint8_t> ReadBytes(const std::string& filePath) 
+{
+    std::ifstream file(filePath, std::ios::ate | std::ios::binary);
+    if (!file.is_open()) {
+        VK_THROW_EXCEPT("failed to open file!");
+    }
+    size_t fileSize = (size_t)file.tellg();
+    std::vector<uint8_t> buffer(fileSize);
+    file.seekg(0);
+    file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
+    file.close();
+    return buffer;
+}
+
 
 const char * ToString(VkPhysicalDeviceType physicalDeviceType)
 {

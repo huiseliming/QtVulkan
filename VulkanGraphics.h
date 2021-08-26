@@ -4,6 +4,7 @@
 #include "VulkanDevice.h"
 #include "VulkanQueue.h"
 #include "VulkanSwapchain.h"
+#include "VulkanImageResource.h"
 #include <algorithm>
 #include <memory>
 #include <vector>
@@ -65,6 +66,7 @@ struct VulkanGraphics
     std::unique_ptr<VkSurfaceKHR, std::function<void (VkSurfaceKHR*)>> pSurface;
     std::unique_ptr<VulkanDevice> pDevice;
     std::unique_ptr<VulkanSwapchain> pSwapchain;
+    std::unique_ptr<VulkanImageResource> pDepthResources;
     
     std::unique_ptr<VulkanWindow> pGraphicsWindow;
 

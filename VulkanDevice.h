@@ -67,8 +67,12 @@ public:
     VkPhysicalDevice PhysicalDevice{VK_NULL_HANDLE};
     VkDevice Device{VK_NULL_HANDLE};
 
-    VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+    VkFormat FindDepthFormat();
+    VkFormat FindSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+    uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
+
+    VkImageView CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
 
 };
 

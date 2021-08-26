@@ -44,6 +44,7 @@ void VulkanGraphics::Initialize()
 {
     pSwapchain = std::make_unique<VulkanSwapchain>(*pDevice);
     pSwapchain->Create(*pSurface, QuerySwapchainSupport(), pGraphicsWindow->GetWindowExtent2D());
+    
 }
 
 void VulkanGraphics::Cleanup()

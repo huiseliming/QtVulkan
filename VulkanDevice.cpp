@@ -1,6 +1,7 @@
 #include "VulkanDevice.h"
 #include "VulkanInstance.h"
 #include "VulkanTools.h"
+#include <cstdint>
 #include <memory>
 #include <vector>
 #include <set>
@@ -241,6 +242,7 @@ void VulkanDevice::Destroy()
 {
     if(Device != VK_NULL_HANDLE){
         vkDestroyDevice(Device,nullptr);
+        Device = VK_NULL_HANDLE;
     }
 }
 
@@ -252,6 +254,51 @@ std::vector<VkPhysicalDevice> VulkanDevice::GetPhysicalDevices(VulkanInstance& i
     physicalDevices.resize(physicalDeviceCount);
     vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices.data());
     return physicalDevices;
+}
+
+VkFormat VulkanDevice::FindDepthFormat()
+{
+    return FindSupportedFormat(
+        {
+            VK_FORMAT_D32_SFLOAT,
+            VK_FORMAT_D16_UNORM,
+            VK_FORMAT_D32_SFLOAT_S8_UINT,
+            VK_FORMAT_D24_UNORM_S8_UINT,
+            VK_FORMAT_D16_UNORM_S8_UINT,
+        },
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+}
+
+VkFormat VulkanDevice::FindSupportedFormat(const std::vector<VkFormat> &candidates,
+                                           VkImageTiling tiling,
+                                           VkFormatFeatureFlags features)
+{
+    for (VkFormat format : candidates) {
+        VkFormatProperties props;
+        vkGetPhysicalDeviceFormatProperties(PhysicalDevice, format, &props);
+
+        if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+            return format;
+        } else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+            return format;
+        }
+    }
+    return VK_FORMAT_UNDEFINED;
+}
+
+uint32_t VulkanDevice::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) 
+{
+    VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties;
+    vkGetPhysicalDeviceMemoryProperties(PhysicalDevice, &physicalDeviceMemoryProperties);
+
+    for (uint32_t i = 0; i < physicalDeviceMemoryProperties.memoryTypeCount; i++) {
+        if ((typeFilter & (1 << i)) && (physicalDeviceMemoryProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+            return i;
+        }
+    }
+    VK_THROW_EXCEPT("Unable to find matching memory!");
+    return UINT32_MAX;
 }
 
 VkImageView VulkanDevice::CreateImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags)

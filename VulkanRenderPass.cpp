@@ -3,6 +3,11 @@
 #include <vulkan/vulkan_core.h>
 #include <array>
 
+VulkanRenderPass::~VulkanRenderPass() 
+{
+    Destroy();
+}
+
 void VulkanRenderPass::Create(VkFormat swapchainImageFormat)
 {
     VkAttachmentDescription colorAttachment{
@@ -79,3 +84,4 @@ void VulkanRenderPass::Destroy()
         RenderPass = VK_NULL_HANDLE;
     }
 }
+
